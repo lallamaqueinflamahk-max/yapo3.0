@@ -1,6 +1,6 @@
 /* Tailwind v4: mobile-first por defecto (sm:, md:, lg: son min-width) */
-@import "@/styles/tailwind.css";
-@import "@/styles/globals.css";
+@import "../styles/tailwind.css";
+@import "../styles/globals.css";
 
 @theme inline {
   --color-background: var(--background);
