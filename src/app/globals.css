@@ -1,0 +1,15 @@
+/* Tailwind v4: mobile-first por defecto (sm:, md:, lg: son min-width) */
+@import "../styles/tailwind.css";
+@import "../styles/globals.css";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-yapo-red: var(--yapo-red);
+  --color-yapo-red-dark: var(--yapo-red-dark);
+  --color-yapo-white: var(--yapo-white);
+  --color-yapo-blue: var(--yapo-blue);
+  --color-yapo-blue-dark: var(--yapo-blue-dark);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}

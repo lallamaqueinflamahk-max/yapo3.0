@@ -1,0 +1,69 @@
+[
+  {
+    "id": "role-vale",
+    "type": "role",
+    "name": "Valé",
+    "description": "Usuario básico. Creá tu perfil laboral, subí videos/fotos de desempeño y participá del feed de tu categoría.",
+    "functions": [
+      "Crear perfil laboral con foto y cédula validada",
+      "Subir video/foto de desempeño laboral",
+      "Consultar trabajos cercanos vía GPS",
+      "Postear en el feed de su categoría laboral",
+      "Recibir ranking y calificación por desempeño",
+      "Interactuar con la comunidad (comentarios y likes de trabajo)"
+    ],
+    "keywords": ["valé", "vale", "usuario básico", "rol", "nivel", "rango", "perfil laboral", "desempeño", "feed", "trabajos cercanos"],
+    "screen": "/profile",
+    "suggestedActions": ["Ver mi perfil", "Buscar trabajos en Inicio", "Subir video de desempeño"]
+  },
+  {
+    "id": "role-capeto",
+    "type": "role",
+    "name": "Capeto",
+    "description": "Todo lo de Valé más liderar una pequeña cuadrilla de Valés. Validá desempeño de tu equipo y organizá mini-retos.",
+    "functions": [
+      "Todo lo del Valé",
+      "Liderar una pequeña cuadrilla de Valés",
+      "Validar desempeño de su equipo y subir contenido audiovisual",
+      "Recibir métricas de rendimiento de su cuadrilla",
+      "Organizar mini-retos o desafíos laborales dentro de su equipo"
+    ],
+    "keywords": ["capeto", "capeto", "cuadrilla", "liderar", "equipo", "métricas", "mini-retos", "desafíos laborales"],
+    "screen": "/home",
+    "suggestedActions": ["Ver cuadrilla en Inicio", "Validar desempeño del equipo", "Crear mini-reto"]
+  },
+  {
+    "id": "role-kavaju",
+    "type": "role",
+    "name": "Kavaju",
+    "description": "Todo lo del Capeto más supervisar varias cuadrillas de una zona. Moderá contenido y recibí reportes de desempeño.",
+    "functions": [
+      "Todo lo del Capeto",
+      "Supervisar varias cuadrillas o Capetos de una zona",
+      "Moderar contenido y desempeño de Valés y Capetos",
+      "Recibir reportes avanzados de métricas de desempeño de su área",
+      "Gestionar incentivos y reconocimientos dentro de su red"
+    ],
+    "keywords": ["kavaju", "kavaju", "supervisor", "zona", "moderar", "reportes", "métricas", "incentivos"],
+    "screen": "/home",
+    "suggestedActions": ["Ver reportes de zona", "Moderar contenido", "Gestionar incentivos"]
+  },
+  {
+    "id": "role-mbarete",
+    "type": "role",
+    "name": "Mbareté",
+    "description": "Máximo nivel. Control territorial, Beca Laboral, Semáforo de Gestión y prioridad en ofertas grandes. Calificá y validá a Kavajus, Capetos y Valés.",
+    "functions": [
+      "Todo lo del Kavaju",
+      "Control total del territorio laboral (cuadrillas y mapas de rendimiento)",
+      "Gestionar la Beca Laboral (salud, cursos, insumos)",
+      "Prioridad en ofertas laborales grandes y contratos de empresas",
+      "Calificar y validar Kavajus, Capetos y Valés",
+      "Acceso al Semáforo de Gestión Territorial (Verde / Amarillo / Rojo)",
+      "Supervisión de reputación y ranking de toda la comunidad local"
+    ],
+    "keywords": ["mbareté", "mbarete", "territorio", "beca laboral", "semáforo", "gestión territorial", "prioridad", "licitaciones"],
+    "screen": "/home",
+    "suggestedActions": ["Ver Semáforo de Gestión", "Gestionar Beca Laboral", "Ver mapa de rendimiento"]
+  }
+]

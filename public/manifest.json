@@ -1,0 +1,9 @@
+{
+  "name": "YAPÓ 3.0",
+  "short_name": "YAPÓ",
+  "description": "Plataforma de identidad, reputación y confianza",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "lang": "es"
+}

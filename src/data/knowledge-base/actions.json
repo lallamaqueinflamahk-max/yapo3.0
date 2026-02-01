@@ -1,0 +1,72 @@
+[
+  {
+    "id": "action-home",
+    "label": "Ver trabajos en Inicio",
+    "screen": "/home",
+    "context": ["trabajo", "empleo", "oferta", "buscar trabajo", "inicio", "home", "ofertas", "cercanos", "gps"],
+    "roleRequired": []
+  },
+  {
+    "id": "action-profile",
+    "label": "Ir a mi Perfil",
+    "screen": "/profile",
+    "context": ["perfil", "mi perfil", "cuenta", "mis datos", "ranking", "calificación", "premios", "escudos"],
+    "roleRequired": []
+  },
+  {
+    "id": "action-wallet",
+    "label": "Abrir Billetera",
+    "screen": "/wallet",
+    "context": ["billetera", "pago", "cobrar", "saldo", "dinero", "fintech", "pagos"],
+    "roleRequired": []
+  },
+  {
+    "id": "action-chat",
+    "label": "Abrir Chat",
+    "screen": "/chat",
+    "context": ["chat", "mensaje", "hablar", "contacto", "comunidad", "escribir"],
+    "roleRequired": []
+  },
+  {
+    "id": "action-cerebro",
+    "label": "Buscar en Cerebro",
+    "screen": "/cerebro",
+    "context": ["buscar", "ayuda", "asistente", "cerebro", "qué puedo", "cómo"],
+    "roleRequired": []
+  },
+  {
+    "id": "action-upload",
+    "label": "Subir video/foto de desempeño",
+    "screen": "/home",
+    "context": ["subir", "video", "foto", "desempeño", "postear", "publicar laboral"],
+    "roleRequired": ["vale", "capeto", "kavaju", "mbarete"]
+  },
+  {
+    "id": "action-feed",
+    "label": "Ver feed de mi categoría",
+    "screen": "/home",
+    "context": ["feed", "categoría", "rubro", "audiovisual", "trabajos publicados"],
+    "roleRequired": []
+  },
+  {
+    "id": "action-referidos",
+    "label": "Ver referidos y ranking",
+    "screen": "/profile",
+    "context": ["referidos", "referir", "invitar", "ranking", "reputación", "nivel"],
+    "roleRequired": []
+  },
+  {
+    "id": "action-escudos",
+    "label": "Ver mis escudos",
+    "screen": "/profile",
+    "context": ["escudos", "insurtech", "fintech", "regalos", "comunidad", "beneficios"],
+    "roleRequired": []
+  },
+  {
+    "id": "action-video",
+    "label": "Ver video / Inicio",
+    "screen": "/video",
+    "context": ["video", "videos", "audiovisual", "ver contenido"],
+    "roleRequired": []
+  }
+]

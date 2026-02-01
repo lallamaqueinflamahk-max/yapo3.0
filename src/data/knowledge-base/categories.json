@@ -1,0 +1,42 @@
+[
+  {
+    "id": "cat-1",
+    "type": "category",
+    "name": "Construcción y oficios",
+    "description": "Trabajos de construcción, albañilería, electricidad, plomería, carpintería y oficios afines.",
+    "subcategories": ["Albañilería", "Electricidad", "Plomería", "Carpintería", "Pintura", "Herrería"],
+    "keywords": ["construcción", "obreros", "albañil", "electricista", "plomero", "carpintero", "oficios"],
+    "screen": "/home",
+    "suggestedActions": ["Ver trabajos de construcción", "Filtrar por categoría en Inicio"]
+  },
+  {
+    "id": "cat-2",
+    "type": "category",
+    "name": "Servicios y mantenimiento",
+    "description": "Limpieza, jardinería, mantenimiento del hogar, reparaciones y servicios a domicilio.",
+    "subcategories": ["Limpieza", "Jardinería", "Mantenimiento", "Reparaciones", "Servicios domicilio"],
+    "keywords": ["servicios", "mantenimiento", "limpieza", "jardinería", "domicilio", "reparación"],
+    "screen": "/home",
+    "suggestedActions": ["Ver ofertas de servicios", "Buscar en Inicio"]
+  },
+  {
+    "id": "cat-3",
+    "type": "category",
+    "name": "Comercio y logística",
+    "description": "Ventas, reparto, almacén, atención al cliente y tareas comerciales.",
+    "subcategories": ["Ventas", "Reparto", "Almacén", "Atención al cliente", "Comercio"],
+    "keywords": ["comercio", "logística", "reparto", "almacén", "ventas", "atención al cliente"],
+    "screen": "/home",
+    "suggestedActions": ["Ver trabajos en comercio", "Inicio"]
+  },
+  {
+    "id": "cat-4",
+    "type": "category",
+    "name": "Otros rubros",
+    "description": "Otras categorías laborales con feed audiovisual y top profesiones por rubro.",
+    "subcategories": ["Variados", "Temporales", "Eventos", "Otros"],
+    "keywords": ["otros", "rubros", "trabajo", "empleo", "categoría laboral"],
+    "screen": "/home",
+    "suggestedActions": ["Explorar en Inicio", "Ver feed por cercanía"]
+  }
+]

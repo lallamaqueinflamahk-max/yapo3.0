@@ -1,0 +1,9 @@
+{
+  "id": "platform-yapo",
+  "type": "platform",
+  "title": "Qué es YAPÓ",
+  "content": "YAPÓ es la Super App paraguaya de identidad, reputación y confianza. Organiza el ecosistema laboral, conecta trabajadores con oportunidades y empresas con talento. Es 100% móvil, usa GPS para ofertas y conexiones cercanas, y promueve un flujo de información confiable y validado. El contenido es exclusivamente laboral: feed audiovisual de desempeño, escudos que validan servicios, y un sistema de referidos con rangos (Valé, Capeto, Kavaju, Mbareté).",
+  "keywords": ["yapó", "qué es", "super app", "paraguay", "plataforma", "trabajo", "reputación", "identidad", "confianza", "ecosistema laboral", "gps", "móvil"],
+  "screen": "/home",
+  "suggestedActions": ["Ver trabajos en Inicio", "Abrir Cerebro para buscar", "Ir a mi Perfil"]
+}

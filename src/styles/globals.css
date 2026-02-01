@@ -1,0 +1,19 @@
+/* YAPÓ 3.0 - Colores oficiales Paraguay */
+:root {
+  --yapo-red: #D52B1E;
+  --yapo-white: #FFFFFF;
+  --yapo-blue: #002395;
+  --yapo-red-dark: #b82419;
+  --yapo-blue-dark: #001d75;
+  --background: var(--yapo-white);
+  --foreground: #171717;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, sans-serif;
+  /* Mobile: evitar zoom en inputs y safe area */
+  -webkit-text-size-adjust: 100%;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}

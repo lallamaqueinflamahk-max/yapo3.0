@@ -1,0 +1,38 @@
+[
+  {
+    "id": "escudo-insurtech",
+    "type": "escudo",
+    "name": "Insurtech",
+    "description": "Salud y acceso a farmacias y clínicas privadas. Valida servicios de salud confiables dentro de YAPÓ.",
+    "keywords": ["insurtech", "salud", "farmacia", "clínicas", "seguro", "beneficios salud"],
+    "screen": "/wallet",
+    "suggestedActions": ["Ver beneficios de salud", "Ir a Billetera"]
+  },
+  {
+    "id": "escudo-fintech",
+    "type": "escudo",
+    "name": "Fintech",
+    "description": "Pagos, ahorro y gestión financiera segura. Todo el flujo de dinero dentro de la plataforma está validado.",
+    "keywords": ["fintech", "pagos", "ahorro", "billetera", "dinero", "cobrar", "pagar", "saldo", "financiero"],
+    "screen": "/wallet",
+    "suggestedActions": ["Abrir Billetera", "Ver saldo", "Gestionar pagos"]
+  },
+  {
+    "id": "escudo-regalos",
+    "type": "escudo",
+    "name": "Regalos",
+    "description": "Beneficios, premios y reconocimientos laborales. Validación de incentivos y recompensas por desempeño.",
+    "keywords": ["regalos", "premios", "beneficios", "reconocimiento", "incentivos", "recompensas"],
+    "screen": "/profile",
+    "suggestedActions": ["Ver mis premios", "Ir a Perfil"]
+  },
+  {
+    "id": "escudo-comunidad",
+    "type": "escudo",
+    "name": "Comunidad",
+    "description": "Conexión y soporte dentro de la red laboral. Contenido y usuarios verificados por la comunidad.",
+    "keywords": ["comunidad", "red laboral", "soporte", "conexión", "referidos", "validación"],
+    "screen": "/chat",
+    "suggestedActions": ["Ver comunidad", "Abrir Chat"]
+  }
+]
