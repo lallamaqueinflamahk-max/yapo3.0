@@ -41,9 +41,9 @@ export default function VoiceButton({
     captureRef.current = capture;
     capture.onTranscript((result: TranscriptResult) => {
       if (result.isFinal && result.text.trim()) {
-        onTranscriptRef.current(result.text.trim());
+        onTranscriptRef.current?.(result.text.trim());
       } else if (!result.isFinal) {
-        onInterimRef.current(result.text);
+        onInterimRef.current?.(result.text);
       }
     });
     return () => {
