@@ -1,0 +1,29 @@
+{
+  "intentPatterns": [
+    { "kind": "buscar_trabajo", "keywords": ["trabajo", "empleo", "busco", "oferta", "vacante", "contratar", "necesito trabajo"], "message": "Encontré opciones relacionadas con trabajo." },
+    { "kind": "ver_perfil", "keywords": ["perfil", "mi perfil", "cuenta", "yo", "mis datos"], "message": "Tu perfil está en la sección Perfil." },
+    { "kind": "ir_billetera", "keywords": ["billetera", "wallet", "dinero", "pago", "cobrar", "saldo"], "message": "Podés gestionar pagos en Billetera." },
+    { "kind": "ir_chat", "keywords": ["chat", "mensaje", "hablar", "contacto", "escribir"], "message": "Abrí Chat para conversar." },
+    { "kind": "ir_inicio", "keywords": ["inicio", "home", "principal", "volver"], "message": "Inicio es tu pantalla principal." }
+  ],
+  "defaultSuggestions": [
+    { "id": "s1", "text": "Trabajos cercanos", "query": "trabajos cercanos" },
+    { "id": "s2", "text": "Mi perfil", "query": "mi perfil" },
+    { "id": "s3", "text": "Billetera", "query": "billetera" },
+    { "id": "s4", "text": "Chat", "query": "chat" }
+  ],
+  "routesByIntent": {
+    "buscar_trabajo": [{ "path": "/home", "label": "Inicio", "description": "Ver trabajos y ofertas" }],
+    "ver_perfil": [{ "path": "/profile", "label": "Perfil", "description": "Ver y editar tu perfil" }],
+    "ir_billetera": [{ "path": "/wallet", "label": "Billetera", "description": "Pagos y saldo" }],
+    "ir_chat": [{ "path": "/chat", "label": "Chat", "description": "Mensajes" }],
+    "ir_inicio": [{ "path": "/home", "label": "Inicio", "description": "Pantalla principal" }],
+    "general": [
+      { "path": "/home", "label": "Inicio" },
+      { "path": "/cerebro", "label": "Cerebro" },
+      { "path": "/chat", "label": "Chat" },
+      { "path": "/wallet", "label": "Billetera" },
+      { "path": "/profile", "label": "Perfil" }
+    ]
+  }
+}

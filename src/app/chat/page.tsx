@@ -4,8 +4,8 @@ import ChatLayout from "@/components/chat/ChatLayout";
 
 export default function ChatPage() {
   return (
-    <main className="flex flex-col">
+    <div className="min-h-screen bg-yapo-white">
       <ChatLayout />
-    </main>
+    </div>
   );
 }

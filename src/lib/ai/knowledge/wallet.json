@@ -1,0 +1,14 @@
+[
+  {
+    "id": "wallet_balance",
+    "triggers": ["saldo", "plata", "dinero", "cuanto tengo"],
+    "action": "wallet:view",
+    "response": "Tu saldo actual es {{balance}} Gs."
+  },
+  {
+    "id": "wallet_transfer",
+    "triggers": ["transferir", "enviar", "pagar"],
+    "action": "wallet:transfer",
+    "response": "¿A quién querés transferir y cuánto?"
+  }
+]

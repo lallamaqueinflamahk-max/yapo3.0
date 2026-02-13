@@ -5,9 +5,12 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "wallet": "node wallet-api.js",
+    "wallet:dev": "node wallet-api.js"
   },
   "dependencies": {
+    "express": "^4.21.0",
     "ws": "^8.18.0"
   }
 }

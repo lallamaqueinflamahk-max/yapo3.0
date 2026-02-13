@@ -3,16 +3,16 @@
     "id": "escudo-insurtech",
     "type": "escudo",
     "name": "Insurtech",
-    "description": "Salud y acceso a farmacias y clínicas privadas. Valida servicios de salud confiables dentro de YAPÓ.",
-    "keywords": ["insurtech", "salud", "farmacia", "clínicas", "seguro", "beneficios salud"],
+    "description": "Salud y acceso a farmacias y clínicas privadas. Servicios de salud confiables dentro de YAPÓ.",
+    "keywords": ["insurtech", "rueda", "salud", "farmacia", "clínicas", "seguro", "beneficios salud", "cobertura"],
     "screen": "/wallet",
-    "suggestedActions": ["Ver beneficios de salud", "Ir a Billetera"]
+    "suggestedActions": ["Ver Insurtech", "Ir a Billetera"]
   },
   {
     "id": "escudo-fintech",
     "type": "escudo",
     "name": "Fintech",
-    "description": "Pagos, ahorro y gestión financiera segura. Todo el flujo de dinero dentro de la plataforma está validado.",
+    "description": "Pagos, ahorro y gestión financiera segura. Todo el flujo de dinero validado.",
     "keywords": ["fintech", "pagos", "ahorro", "billetera", "dinero", "cobrar", "pagar", "saldo", "financiero"],
     "screen": "/wallet",
     "suggestedActions": ["Abrir Billetera", "Ver saldo", "Gestionar pagos"]
@@ -21,7 +21,7 @@
     "id": "escudo-regalos",
     "type": "escudo",
     "name": "Regalos",
-    "description": "Beneficios, premios y reconocimientos laborales. Validación de incentivos y recompensas por desempeño.",
+    "description": "Beneficios, premios y reconocimientos laborales. Incentivos y recompensas por desempeño.",
     "keywords": ["regalos", "premios", "beneficios", "reconocimiento", "incentivos", "recompensas"],
     "screen": "/profile",
     "suggestedActions": ["Ver mis premios", "Ir a Perfil"]
@@ -30,9 +30,9 @@
     "id": "escudo-comunidad",
     "type": "escudo",
     "name": "Comunidad",
-    "description": "Conexión y soporte dentro de la red laboral. Contenido y usuarios verificados por la comunidad.",
-    "keywords": ["comunidad", "red laboral", "soporte", "conexión", "referidos", "validación"],
-    "screen": "/chat",
-    "suggestedActions": ["Ver comunidad", "Abrir Chat"]
+    "description": "Conexión y soporte en la red laboral. Interacciones, validación de desempeño, ranking y referidos. Apartado especial de Comunidad.",
+    "keywords": ["comunidad", "red laboral", "soporte", "conexión", "referidos", "validación", "ranking", "desempeño"],
+    "screen": "/comunidad",
+    "suggestedActions": ["Ir a Comunidad", "Ver ranking", "Referidos"]
   }
 ]

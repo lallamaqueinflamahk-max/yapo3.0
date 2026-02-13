@@ -13,25 +13,25 @@ export type IncomingEvent =
   | { type: "presence"; roomId: string; userId: string; userName: string; status: PresencePayload["status"] };
 
 export type OutgoingEvent =
-  | { type: "auth"; userId: string; userName: string }
+  | { type: "auth"; userId: string; userName?: string }
   | { type: "get_rooms" }
   | { type: "join_room"; roomId: string; roomName?: string; roomType?: "private" | "group" }
   | { type: "leave_room"; roomId: string }
-  | { type: "message"; roomId: string; text: string }
+  | { type: "chat_message"; roomId: string; text: string }
   | { type: "typing"; roomId: string; isTyping: boolean };
 
 function getDefaultUrl(): string {
-  if (typeof window === "undefined") return "ws://localhost:3001";
-  const host = window.location.hostname;
+  if (typeof window === "undefined") {
+    return process.env.NEXT_PUBLIC_WS_URL?.replace(/^https/, "wss").replace(/^http/, "ws") ?? "ws://localhost:3001";
+  }
   const env = process.env.NEXT_PUBLIC_WS_URL?.trim();
   if (env) {
     if (env.startsWith("https")) return env.replace(/^https/, "wss");
     if (env.startsWith("http")) return env.replace(/^http/, "ws");
     return env;
   }
-  if (host === "localhost" || host === "127.0.0.1") {
-    return "ws://localhost:3001";
-  }
+  const host = window.location.hostname;
+  if (host === "localhost" || host === "127.0.0.1") return "ws://localhost:3001";
   return "";
 }
 

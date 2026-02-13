@@ -1,0 +1,12 @@
+[
+  {
+    "id": "flow-wallet-balance",
+    "steps": ["wallet_balance"],
+    "description": "Consultar saldo"
+  },
+  {
+    "id": "flow-wallet-transfer",
+    "steps": ["wallet_transfer", "confirm_transfer"],
+    "description": "Transferir fondos"
+  }
+]

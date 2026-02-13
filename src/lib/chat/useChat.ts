@@ -7,12 +7,15 @@ import type { Message, Room, PresencePayload } from "./types";
 const WS_URL = getWebSocketUrl();
 
 export function useChat(userId: string, userName: string) {
+  // #region agent log
+  fetch('http://127.0.0.1:7244/ingest/cdb4230b-daff-48fe-87c3-cb3e79b1f0a1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useChat.ts:entry',message:'useChat called',data:{userId,userNameSlice:(userName||'').slice(0,20)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
+  // #endregion
   const socketRef = useRef(createChatSocket(WS_URL));
   const [connected, setConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [rooms, setRooms] = useState<Room[]>([]);
-  const [messagesByRoom, setMessagesByRoom] = useState<Record<string, Message[]>>({});
-  const [presenceByRoom, setPresenceByRoom] = useState<Record<string, Record<string, PresencePayload["status"]>>({});
+  const [messagesByRoom, setMessagesByRoom] = useState<{ [key: string]: Message[] }>({});
+  const [presenceByRoom, setPresenceByRoom] = useState<{ [key: string]: { [key: string]: PresencePayload["status"] } }>({});
   const currentRoomRef = useRef<string | null>(null);
 
   const connect = useCallback(() => {
@@ -51,6 +54,47 @@ export function useChat(userId: string, userName: string) {
             [event.message.roomId]: [...(prev[event.message.roomId] ?? []), event.message],
           }));
           break;
+        case "chat_message": {
+          const roomId = event.roomId ?? currentRoomRef.current;
+          const fromUserId = event.fromUserId ?? "unknown";
+          const message: Message = {
+            id: `msg-${Date.now()}-${fromUserId}`,
+            roomId: roomId ?? "",
+            userId: fromUserId,
+            userName: fromUserId,
+            text: event.text ?? "",
+            createdAt: new Date().toISOString(),
+          };
+          if (roomId) {
+            setMessagesByRoom((prev) => ({
+              ...prev,
+              [roomId]: [...(prev[roomId] ?? []), message],
+            }));
+            setPresenceByRoom((prev) => ({
+              ...prev,
+              [roomId]: {
+                ...(prev[roomId] ?? {}),
+                [fromUserId]: "online",
+              },
+            }));
+          }
+          break;
+        }
+        case "typing":
+        case "user_typing": {
+          const roomId = event.roomId ?? currentRoomRef.current;
+          const uid = event.fromUserId ?? event.userId ?? "unknown";
+          const isTyping = event.isTyping ?? (event as { isTyping?: boolean }).isTyping ?? true;
+          if (!roomId) break;
+          setPresenceByRoom((prev) => ({
+            ...prev,
+            [roomId]: {
+              ...(prev[roomId] ?? {}),
+              [uid]: isTyping ? "typing" : "online",
+            },
+          }));
+          break;
+        }
         case "presence": {
           const roomId = "roomId" in event ? event.roomId : currentRoomRef.current;
           if (!roomId) break;
@@ -87,6 +131,19 @@ export function useChat(userId: string, userName: string) {
         roomName,
         roomType,
       });
+      setRooms((prev) => {
+        const exists = prev.some((r) => r.id === roomId);
+        if (exists) return prev;
+        return [
+          ...prev,
+          {
+            id: roomId,
+            name: roomName ?? roomId,
+            type: roomType ?? "group",
+            lastMessage: null,
+          },
+        ];
+      });
     },
     []
   );
@@ -97,7 +154,7 @@ export function useChat(userId: string, userName: string) {
   }, []);
 
   const sendMessage = useCallback((roomId: string, text: string) => {
-    socketRef.current.send({ type: "message", roomId, text });
+    socketRef.current.send({ type: "chat_message", roomId, text });
   }, []);
 
   const setTyping = useCallback((roomId: string, isTyping: boolean) => {
@@ -115,6 +172,9 @@ export function useChat(userId: string, userName: string) {
     [joinRoom]
   );
 
+  // #region agent log
+  fetch('http://127.0.0.1:7244/ingest/cdb4230b-daff-48fe-87c3-cb3e79b1f0a1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useChat.ts:exit',message:'useChat return',data:{roomsCount:rooms.length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
+  // #endregion
   return {
     connected,
     connectionError,
@@ -133,7 +193,7 @@ export function useChat(userId: string, userName: string) {
 
 export function useMessages(
   roomId: string | null,
-  messagesByRoom: Record<string, Message[]>
+  messagesByRoom: { [key: string]: Message[] }
 ): Message[] {
   if (!roomId) return [];
   return messagesByRoom[roomId] ?? [];
@@ -141,8 +201,8 @@ export function useMessages(
 
 export function usePresence(
   roomId: string | null,
-  presenceByRoom: Record<string, Record<string, PresencePayload["status"]>>
-): Record<string, PresencePayload["status"]> {
+  presenceByRoom: { [key: string]: { [key: string]: PresencePayload["status"] } }
+): { [key: string]: PresencePayload["status"] } {
   if (!roomId) return {};
   return presenceByRoom[roomId] ?? {};
 }

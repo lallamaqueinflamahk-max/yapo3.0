@@ -1,5 +1,7 @@
 "use client";
 
+import SafeModeRoleSelector from "@/components/auth/SafeModeRoleSelector";
+
 export default function Header() {
   const handleMenu = () => {
     console.log("[Header] Menú tocado");
@@ -7,7 +9,7 @@ export default function Header() {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 flex h-14 items-center justify-center bg-yapo-red px-4 pt-[env(safe-area-inset-top)] text-yapo-white shadow-md"
+      className="fixed top-0 left-0 right-0 z-50 flex h-14 items-center justify-center gap-2 bg-yapo-red px-4 pt-[env(safe-area-inset-top)] text-yapo-white shadow-md"
       role="banner"
     >
       <button
@@ -29,6 +31,9 @@ export default function Header() {
         </svg>
       </button>
       <span className="text-lg font-bold tracking-wide">YAPÓ</span>
+      <div className="absolute right-4 top-1/2 -translate-y-1/2">
+        <SafeModeRoleSelector variant="compact" className="[&_select]:border-white/30 [&_select]:bg-white/10 [&_select]:text-white [&_select]:min-h-[36px]" />
+      </div>
     </header>
   );
 }

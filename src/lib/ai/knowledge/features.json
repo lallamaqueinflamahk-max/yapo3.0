@@ -1,0 +1,23 @@
+[
+  {
+    "id": "feature-wallet",
+    "name": "Billetera",
+    "description": "Ver saldo y transferir PYG.",
+    "keywords": ["billetera", "wallet", "saldo", "transferir", "pagar"],
+    "screen": "/wallet"
+  },
+  {
+    "id": "feature-chat",
+    "name": "Chat",
+    "description": "Mensajes y conversaciones.",
+    "keywords": ["chat", "mensaje", "hablar", "contacto"],
+    "screen": "/chat"
+  },
+  {
+    "id": "feature-video",
+    "name": "Video",
+    "description": "Videollamadas.",
+    "keywords": ["video", "videollamada", "llamar"],
+    "screen": "/video"
+  }
+]

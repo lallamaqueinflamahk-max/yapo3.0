@@ -1,0 +1,32 @@
+{
+  "roles": [
+    { "id": "vale", "name": "Valé", "description": "Usuario básico. Perfil laboral, desempeño, feed.", "screen": "/profile" },
+    { "id": "capeto", "name": "Capeto", "description": "Valé + cuadrilla, validar, micro-capacitar.", "screen": "/home" },
+    { "id": "kavaju", "name": "Kavaju", "description": "Capeto + zona, reportes, incentivos.", "screen": "/home" },
+    { "id": "mbarete", "name": "Mbareté", "description": "Territorio, Beca Laboral, Semáforo.", "screen": "/home" }
+  ],
+  "escudos": [
+    { "id": "escudo-biometrico", "name": "Escudo biométrico", "description": "Verificación de identidad para operaciones sensibles.", "intentId": "wallet_view" },
+    { "id": "escudo-tiempo", "name": "Tiempo de espera", "description": "Retardo antes de confirmar transferencias.", "intentId": "wallet_transfer" },
+    { "id": "escudo-monto", "name": "Límite de monto", "description": "Límite diario por rol.", "intentId": "wallet_transfer" },
+    { "id": "escudo-territorial", "name": "Semáforo territorial", "description": "Zonas verde/amarillo/rojo.", "intentId": "navigate.territory" }
+  ],
+  "beneficios": [
+    { "id": "beca-lab", "name": "Beca Laboral", "roleRequired": "mbarete", "screen": "/wallet" },
+    { "id": "subsidios", "name": "Subsidios", "roleRequired": "vale", "intentId": "wallet_subsidy" }
+  ],
+  "walletActions": [
+    { "id": "wallet_view", "label": "Ver balance", "icon": "💼", "intentId": "wallet_view", "payload": {} },
+    { "id": "wallet_transfer", "label": "Transferir (mock)", "icon": "📤", "intentId": "wallet_transfer", "payload": { "toUserId": "destino-mock", "amount": 10000 } },
+    { "id": "wallet_subsidy", "label": "Subsidios", "icon": "📋", "intentId": "wallet_subsidy", "payload": {} }
+  ],
+  "intentChips": [
+    { "id": "chip-wallet", "label": "Mi billetera", "icon": "💼", "intentId": "wallet_view" },
+    { "id": "chip-transfer", "label": "Transferir", "icon": "📤", "intentId": "wallet_transfer", "payload": { "toUserId": "user-2", "amount": 5000 } },
+    { "id": "chip-subsidios", "label": "Subsidios", "icon": "📋", "intentId": "wallet_subsidy" },
+    { "id": "chip-chat", "label": "Mensajes", "icon": "💬", "intentId": "navigate.chat" },
+    { "id": "chip-perfil", "label": "Mi perfil", "icon": "👤", "intentId": "navigate.profile" },
+    { "id": "chip-inicio", "label": "Inicio", "icon": "🏠", "intentId": "navigate.home" },
+    { "id": "chip-territorio", "label": "Territorio", "icon": "🗺️", "intentId": "navigate.territory" }
+  ]
+}

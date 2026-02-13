@@ -45,6 +45,14 @@ export interface IVoiceCapture {
 }
 
 /**
+ * Proveedor de voz: solo speak(text) asíncrono.
+ * Implementaciones: Speech Synthesis, ElevenLabs, etc.
+ */
+export interface VoiceProvider {
+  speak(text: string): Promise<void>;
+}
+
+/**
  * Interfaz de salida de voz.
  * Implementaciones: Web Speech Synthesis (actual), ElevenLabs (futuro).
  */

@@ -13,6 +13,8 @@ export interface Message {
   userName: string;
   text: string;
   createdAt: string;
+  /** YAPÓ-Community: cuando un profesional responde con presupuesto, adjuntar su perfil para mostrar la tarjeta. */
+  attachedPerfilId?: string;
 }
 
 export interface Room {

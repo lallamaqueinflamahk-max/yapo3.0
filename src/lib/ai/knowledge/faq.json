@@ -1,0 +1,14 @@
+[
+  {
+    "id": "faq-saldo",
+    "question": "¿Cómo veo mi saldo?",
+    "answer": "Decí \"saldo\" o \"cuánto tengo\" o entrá a Billetera.",
+    "keywords": ["saldo", "cuanto tengo", "plata", "dinero"]
+  },
+  {
+    "id": "faq-transferir",
+    "question": "¿Cómo transfiero?",
+    "answer": "Decí \"transferir\" o \"enviar\" y te guío. También podés ir a Billetera y tocar Transferir.",
+    "keywords": ["transferir", "enviar", "pagar"]
+  }
+]

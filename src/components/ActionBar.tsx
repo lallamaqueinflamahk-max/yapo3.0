@@ -1,26 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   IconHome,
   IconCerebro,
-  IconChat,
   IconWallet,
   IconProfile,
 } from "@/components/icons";
 
+/** ActionBar: 4 iconos — Inicio, Buscar (mapa), Billetera, Perfil. Etiqueta unificada "Buscar" (auditoría UX). */
 const actions = [
   { href: "/home", label: "Inicio", Icon: IconHome, id: "home" },
-  { href: "/cerebro", label: "Cerebro", Icon: IconCerebro, id: "cerebro" },
-  { href: "/chat", label: "Chat", Icon: IconChat, id: "chat" },
-  { href: "/wallet", label: "Billetera", Icon: IconWallet, id: "wallet" },
-  { href: "/profile", label: "Perfil", Icon: IconProfile, id: "profile" },
+  { href: "/mapa", label: "Buscar", Icon: IconCerebro, id: "buscar" },
+  { href: "/wallet", label: "Billetera", Icon: IconWallet, id: "billetera" },
+  { href: "/profile", label: "Perfil", Icon: IconProfile, id: "perfil" },
 ] as const;
 
 export default function ActionBar() {
-  const handleAction = (id: string) => {
-    console.log(`[ActionBar] Navegar: ${id}`);
-  };
+  const pathname = usePathname();
 
   return (
     <nav
@@ -28,18 +26,25 @@ export default function ActionBar() {
       role="navigation"
       aria-label="Acciones principales"
     >
-      {actions.map(({ href, label, Icon, id }) => (
-        <Link
-          key={id}
-          href={href}
-          onClick={() => handleAction(id)}
-          className="flex min-h-[48px] min-w-[48px] flex-col items-center justify-center gap-0.5 rounded-xl px-3 py-2 text-yapo-blue transition-[transform,background] active:scale-95 active:bg-yapo-blue/10"
-          aria-label={label}
-        >
-          <Icon className="h-7 w-7 shrink-0" />
-          <span className="text-[10px] font-medium">{label}</span>
-        </Link>
-      ))}
+      {actions.map(({ href, label, Icon, id }) => {
+        const isActive = pathname === href || (href !== "/home" && pathname.startsWith(href));
+        return (
+          <Link
+            key={id}
+            href={href}
+            className={`flex min-h-[48px] min-w-[48px] flex-col items-center justify-center gap-0.5 rounded-xl px-3 py-2 transition-[transform,background] duration-75 active:scale-95 ${
+              isActive
+                ? "bg-yapo-blue/15 font-semibold text-yapo-blue"
+                : "text-yapo-blue active:bg-yapo-blue/10"
+            }`}
+            aria-label={label}
+            aria-current={isActive ? "page" : undefined}
+          >
+            <Icon className="h-7 w-7 shrink-0" />
+            <span className="text-[10px] font-medium">{label}</span>
+          </Link>
+        );
+      })}
     </nav>
   );
 }

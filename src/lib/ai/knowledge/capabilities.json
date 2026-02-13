@@ -1,0 +1,27 @@
+[
+  {
+    "id": "wallet:transfer",
+    "description": "Enviar dinero a otro usuario",
+    "rolesAllowed": ["cliente", "pyme", "enterprise"]
+  },
+  {
+    "id": "chat:open",
+    "description": "Abrir pantalla de chat / mensajes",
+    "rolesAllowed": []
+  },
+  {
+    "id": "chat:new",
+    "description": "Crear nueva conversación o sala",
+    "rolesAllowed": []
+  },
+  {
+    "id": "video:call",
+    "description": "Iniciar videollamada (crear sala)",
+    "rolesAllowed": []
+  },
+  {
+    "id": "video:join",
+    "description": "Unirse a una videollamada existente",
+    "rolesAllowed": []
+  }
+]

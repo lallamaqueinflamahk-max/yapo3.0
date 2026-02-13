@@ -1,11 +1,15 @@
 /**
  * Tipos del motor de razonamiento del Cerebro.
  * Salida: sugerencias, acciones, rutas de navegación.
+ * Contexto: ver cerebroContext.ts.
  */
 
-import type { IntentKind as KBIntentKind } from "@/lib/ai/knowledge-base/intents";
+import type { IntentKind as KnowledgeIntentKind } from "@/lib/ai/knowledge";
 
-export type IntentKind = KBIntentKind;
+export type IntentKind = KnowledgeIntentKind;
+
+/** Re-export del contexto (definido en cerebroContext.ts). */
+export type { CerebroContext } from "@/lib/ai/cerebroContext";
 
 export interface Suggestion {
   id: string;

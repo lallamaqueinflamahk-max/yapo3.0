@@ -1,0 +1,274 @@
+// YAPÓ 3.0 – Identidad real + registro legal + persistencia
+// User, Profile, Consent (YAPÓ) + Account, Session, VerificationToken (Auth.js)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// -----------------------------------------------------------------------------
+// Auth.js (NextAuth v5) – OAuth + sesiones
+// -----------------------------------------------------------------------------
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?  @db.Text
+  access_token      String?  @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?  @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// -----------------------------------------------------------------------------
+// YAPÓ – Usuario, perfil, consentimientos
+// -----------------------------------------------------------------------------
+
+model User {
+  id                 String    @id @default(cuid())
+  email              String    @unique
+  name               String?
+  emailVerified      DateTime?
+  image              String?
+  passwordHash       String?
+  provider           String?
+  role               String    @default("vale")
+  subscriptionPlanId String?   // Básico | Valé | Capeto | Kavaju | PyME | Enterprise
+  whatsapp            String?   // teléfono para link WhatsApp
+  createdAt          DateTime  @default(now())
+
+  accounts Account[]
+  sessions Session[]
+  profile  Profile?
+  consents Consent[]
+  wallet   Wallet?
+  userShields UserShield[]
+}
+
+model Profile {
+  id              String  @id @default(cuid())
+  userId          String  @unique
+  country         String?
+  territory       String?
+  workStatus      String?
+  workType        String?
+  education       String?
+  certifications  String?
+  profileStatus   String  @default("INCOMPLETO")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Consent {
+  id         String   @id @default(cuid())
+  userId     String
+  version    String   // "privacy-v1" | "terms-v1" | "consent-login" | etc.
+  acceptedAt DateTime
+  ip         String?
+  userAgent  String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Planes de suscripción (seed): precios, límites, beneficios
+model SubscriptionPlan {
+  id          String   @id @default(cuid())
+  slug        String   @unique // basico | vale | capeto | kavaju | pyme | enterprise
+  name        String
+  pricePyG    Int      @default(0) // 0 = gratis
+  period      String   @default("month") // month | year | once
+  maxOffers   Int?     // null = ilimitado
+  maxTransfers Int?
+  benefits    String?  @db.Text // JSON array descripción
+  createdAt   DateTime @default(now())
+}
+
+// Semáforos territoriales (seed / dashboard)
+model Semaphore {
+  id          String   @id @default(cuid())
+  zone        String   @unique
+  state       String   // green | yellow | red
+  updatedAt   DateTime @updatedAt
+}
+
+// Calificaciones empleado ↔ empleador (dashboard)
+model Rating {
+  id         String   @id @default(cuid())
+  fromUserId String
+  toUserId   String
+  score      Int      // 1-5
+  comment    String?  @db.Text
+  type       String   // employee_to_employer | employer_to_employee
+  createdAt  DateTime @default(now())
+}
+
+// -----------------------------------------------------------------------------
+// FASE 2 – Wallet + Escudos (Shields)
+// -----------------------------------------------------------------------------
+
+model Wallet {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  balance   Decimal  @default(0) @db.Decimal(18, 2)
+  status    String   @default("ACTIVE") // ACTIVE | FROZEN
+  createdAt DateTime @default(now())
+
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions WalletTransaction[]
+}
+
+model WalletTransaction {
+  id        String   @id @default(cuid())
+  walletId  String
+  type      String   // CREDIT | DEBIT | TRANSFER
+  amount    Decimal  @db.Decimal(18, 2)
+  reason    String?
+  createdAt DateTime @default(now())
+  devOnly   Boolean  @default(false) // true si SAFE MODE / no persistido
+
+  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+}
+
+model Shield {
+  id          String   @id @default(cuid())
+  type        String   // SALUD | FINTECH | COMUNIDAD | SUBSIDIO
+  level       Int      @default(1)
+  territoryId String?
+  active      Boolean  @default(true)
+
+  userShields UserShield[]
+}
+
+model UserShield {
+  id       String   @id @default(cuid())
+  userId   String
+  shieldId String
+  status   String   @default("ACTIVE") // ACTIVE | SUSPENDED
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shield Shield @relation(fields: [shieldId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, shieldId])
+}
+
+// -----------------------------------------------------------------------------
+// Búsqueda geográfica YAPÓ – zona, rubro, GPS, semáforo oferta/demanda
+// -----------------------------------------------------------------------------
+
+/// Geografía Paraguay: departamento, ciudad, barrio y centroide (opcional polígono WKT/GeoJSON)
+model GeografiaPy {
+  idBarrio        Int      @id @default(autoincrement())
+  slug            String?  @unique @db.VarChar(80) // id frontend ej. asuncion-botanic (para API mapa)
+  departamento    String   @db.VarChar(120)
+  ciudad          String   @db.VarChar(120)
+  barrioNombre    String   @map("barrio_nombre") @db.VarChar(120)
+  latitudCentro   Decimal  @map("latitud_centro") @db.Decimal(10, 7)
+  longitudCentro  Decimal  @map("longitud_centro") @db.Decimal(10, 7)
+  geofencePoly    String?  @map("geofence_poly") @db.Text // WKT o GeoJSON; PostGIS vía raw SQL
+
+  metricasSemaforo MetricasSemaforo[]
+  pedidos          PedidoGeo[]
+  profesionales    ProfesionalGeo[]
+
+  @@map("geografia_py")
+}
+
+/// Nivel del semáforo: Verde | Amarillo | Rojo
+enum NivelAlerta {
+  Verde
+  Amarillo
+  Rojo
+}
+
+/// Métricas de semáforo por barrio y rubro (oferta/demanda en tiempo real)
+model MetricasSemaforo {
+  id              String      @id @default(cuid())
+  idBarrio        Int         @map("id_barrio")
+  rubro           String      @db.VarChar(80)
+  densidadProf    Int         @map("densidad_prof") // profesionales online en la zona
+  demandaActiva   Int         @map("demanda_activa") // pedidos abiertos
+  nivelAlerta     NivelAlerta @map("nivel_alerta")
+
+  barrio GeografiaPy @relation(fields: [idBarrio], references: [idBarrio], onDelete: Cascade)
+
+  @@unique([idBarrio, rubro])
+  @@map("metricas_semaforo")
+}
+
+/// Rubro/categoría para pedidos (id_rubro en pedidos)
+model Rubro {
+  id     String   @id @default(cuid())
+  nombre String   @unique @db.VarChar(80)
+  slug   String   @unique @db.VarChar(80)
+
+  pedidos        PedidoGeo[]
+  profesionales  ProfesionalGeo[]
+}
+
+/// Profesionales con ubicación, sello Mbareté y calidad (búsqueda geo)
+model ProfesionalGeo {
+  idProfesional  String   @id @default(cuid()) @map("id_profesional")
+  nombre         String   @db.VarChar(200)
+  rubro          String   @db.VarChar(80)
+  idBarrio       Int?     @map("id_barrio")
+  latitud        Decimal? @db.Decimal(10, 7)
+  longitud       Decimal? @db.Decimal(10, 7)
+  selloMbarette Boolean  @default(false) @map("sello_mbareté")
+  calidad       Int      @default(0) // 1-5
+  precio        Decimal? @db.Decimal(12, 2)
+  userId         String?  @map("user_id") // opcional vínculo con User
+
+  barrio GeografiaPy? @relation(fields: [idBarrio], references: [idBarrio], onDelete: SetNull)
+  rubroRef Rubro?     @relation(fields: [rubro], references: [nombre], onDelete: Restrict)
+}
+
+/// Pedidos por rubro y barrio (demanda activa para semáforo)
+model PedidoGeo {
+  idPedido     String   @id @default(cuid()) @map("id_pedido")
+  idRubro     String   @map("id_rubro")
+  idBarrio    Int      @map("id_barrio")
+  estado      PedidoEstado
+  fechaCreacion DateTime @default(now()) @map("fecha_creacion")
+
+  barrio GeografiaPy @relation(fields: [idBarrio], references: [idBarrio], onDelete: Cascade)
+  rubro  Rubro       @relation(fields: [idRubro], references: [id], onDelete: Cascade)
+
+  @@map("pedidos")
+}
+
+enum PedidoEstado {
+  abierto
+  cerrado
+  fallido
+}

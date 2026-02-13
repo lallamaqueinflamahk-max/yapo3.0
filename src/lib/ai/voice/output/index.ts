@@ -12,3 +12,9 @@ export function createVoiceOutput(): IVoiceOutput {
 }
 
 export { createWebSpeechOutput } from "./web-speech-output";
+export {
+  createSpeechSynthesis,
+  type SpeechSynthesisLang,
+  type SpeechSynthesisAPIOptions,
+  type SpeechSynthesisAPIHandle,
+} from "./speech-synthesis-api";

@@ -12,3 +12,8 @@ export function createVoiceCapture(lang = "es-ES"): IVoiceCapture {
 }
 
 export { createWebSpeechCapture } from "./web-speech-capture";
+export {
+  createWebSpeechAPI,
+  type WebSpeechAPIOptions,
+  type WebSpeechAPIHandle,
+} from "./web-speech-api";

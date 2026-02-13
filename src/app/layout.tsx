@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SessionProvider as NextAuthSessionProvider } from "next-auth/react";
+import { SessionProvider } from "@/lib/auth";
+import { AuthSessionBridge } from "@/lib/auth-next/SessionBridge";
+import { ConsentGuard } from "@/lib/auth-next/ConsentGuard";
+import { ProfileGuard } from "@/lib/auth-next/ProfileGuard";
+import { CerebroResultHandlerProvider } from "@/components/ui/CerebroResultHandler";
 import Layout from "@/components/Layout";
+import { ClientRenderLog } from "@/components/ClientRenderLog";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -19,6 +26,10 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   appleWebApp: { capable: true, title: "YAPÓ 3.0" },
   viewport: { width: "device-width", initialScale: 1 },
+  icons: {
+    icon: "/images/icon.png",
+    apple: "/images/icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -31,7 +42,20 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Layout>{children}</Layout>
+        <ClientRenderLog />
+        <NextAuthSessionProvider>
+          <SessionProvider>
+            <AuthSessionBridge>
+              <ConsentGuard>
+                <ProfileGuard>
+                  <CerebroResultHandlerProvider>
+                    <Layout>{children}</Layout>
+                  </CerebroResultHandlerProvider>
+                </ProfileGuard>
+              </ConsentGuard>
+            </AuthSessionBridge>
+          </SessionProvider>
+        </NextAuthSessionProvider>
       </body>
     </html>
   );

@@ -33,7 +33,7 @@ export default function RoomList({
             <button
               type="button"
               onClick={() => onSelectRoom(room)}
-              className="flex w-full items-center gap-3 border-b border-yapo-blue/10 px-4 py-3 text-left transition-[background] active:bg-yapo-blue/5"
+              className="flex w-full items-center gap-3 border-b border-yapo-blue/10 px-4 py-3 text-left transition-[transform,background] duration-150 active:scale-[0.995] active:bg-yapo-blue/5"
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-yapo-blue/20 text-lg font-semibold text-yapo-blue">
                 {room.name.charAt(0).toUpperCase()}

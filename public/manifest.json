@@ -5,5 +5,9 @@
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "lang": "es"
+  "lang": "es",
+  "icons": [
+    { "src": "/images/icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/images/icon.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
 }

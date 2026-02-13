@@ -110,7 +110,7 @@ export function searchKnowledgeBase(query: string): KnowledgeSearchResult[] {
     if (score > 0) results.push(buildResult(entry, content, score));
   }
 
-  for (const entry of actions) {
+  for (const entry of actionEntries) {
     const score = matchScore(q, entry.context, entry.label);
     if (score > 0) {
       results.push(buildResult(entry, entry.label, score));

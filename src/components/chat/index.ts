@@ -1,4 +1,10 @@
 export { default as ChatLayout } from "./ChatLayout";
+export { default as ChatList } from "./ChatList";
+export { default as ChatRoom } from "./ChatRoom";
+export { default as ChatInput } from "./ChatInput";
+export { default as ChatWhatsAppUI } from "./ChatWhatsAppUI";
+export { default as ChatWhatsAppBridge } from "./ChatWhatsAppBridge";
+export { default as ChatInputWhatsApp } from "./ChatInputWhatsApp";
 export { default as RoomList } from "./RoomList";
 export { default as Conversation } from "./Conversation";
 export { default as MessageBubble } from "./MessageBubble";

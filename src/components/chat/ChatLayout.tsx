@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
+import Link from "next/link";
 import { useChat, useMessages, usePresence } from "@/lib/chat";
 import type { Room } from "@/lib/chat";
 import RoomList from "./RoomList";
 import Conversation from "./Conversation";
+import ChatWhatsAppUI from "./ChatWhatsAppUI";
 import CreateRoomForm from "./CreateRoomForm";
 
 const FALLBACK_USER_ID = "user-default";
@@ -43,6 +45,10 @@ export default function ChatLayout() {
     createRoom,
     refreshRooms,
   } = useChat(userId, userName);
+
+  // #region agent log
+  fetch('http://127.0.0.1:7244/ingest/cdb4230b-daff-48fe-87c3-cb3e79b1f0a1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ChatLayout.tsx:afterUseChat',message:'ChatLayout after useChat',data:{connected,roomsCount:rooms.length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
+  // #endregion
 
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -96,23 +102,31 @@ export default function ChatLayout() {
   );
 
   return (
-    <div className="flex h-[calc(100dvh-7rem)] flex-col overflow-hidden bg-yapo-white">
+    <div className="flex h-[calc(100dvh-7rem)] flex-col overflow-hidden bg-yapo-white transition-[height] duration-200 ease-out">
       {selectedRoom ? (
-        <Conversation
+        <ChatWhatsAppUI
           roomId={selectedRoom.id}
           roomName={selectedRoom.name}
-          roomType={selectedRoom.type}
           messages={messages}
-          presence={presence}
           currentUserId={userId}
-          onSend={handleSend}
+          isSomeoneTyping={Object.values(presence).some((s) => s === "typing")}
+          typingUserName={Object.entries(presence).find(([, s]) => s === "typing")?.[0] ? "Alguien" : undefined}
+          onSendMessage={handleSend}
           onTyping={handleTyping}
           onBack={handleBack}
-          connected={connected}
+          disabled={!connected}
         />
       ) : (
         <>
-          <header className="flex shrink-0 items-center justify-between border-b border-yapo-blue/20 bg-yapo-white px-4 py-3">
+          <header className="flex shrink-0 items-center justify-between gap-2 border-b border-yapo-blue/20 bg-yapo-white px-4 py-3">
+            <Link
+              href="/home"
+              className="flex items-center gap-2 text-sm font-medium text-yapo-blue active:opacity-80"
+              aria-label="Volver a Inicio YAPÓ"
+            >
+              <BackIcon className="h-5 w-5 shrink-0" />
+              <span>Inicio YAPÓ</span>
+            </Link>
             <h1 className="text-lg font-semibold text-foreground">Chat</h1>
             <button
               type="button"
@@ -140,7 +154,7 @@ export default function ChatLayout() {
                 <button
                   type="button"
                   onClick={reconnect}
-                  className="mt-2 rounded-xl bg-yapo-blue px-4 py-2 text-sm font-medium text-yapo-white active:scale-95"
+                  className="mt-2 rounded-xl bg-yapo-blue px-4 py-2 text-sm font-medium text-yapo-white transition-[transform,opacity] duration-150 active:scale-95"
                 >
                   Reintentar
                 </button>
@@ -151,10 +165,42 @@ export default function ChatLayout() {
               onSelectRoom={handleSelectRoom}
               connected={connected}
             />
+            <div className="border-t border-yapo-blue/10 px-4 py-3">
+              <p className="mb-2 text-xs font-medium text-yapo-blue/70">Volver a YAPÓ</p>
+              <Link
+                href="/home"
+                className="mb-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-yapo-blue/30 bg-yapo-blue/10 px-4 py-3 text-sm font-semibold text-yapo-blue transition-[transform,background] active:scale-[0.98] active:bg-yapo-blue/20"
+              >
+                Inicio YAPÓ
+              </Link>
+              <p className="mb-2 text-xs font-medium text-yapo-blue/70">Acceso directo</p>
+              <div className="flex flex-wrap gap-2">
+                <a
+                  href="/chat/private?with=user-other&name=Contacto"
+                  className="inline-flex items-center gap-2 rounded-xl border-2 border-yapo-blue/30 bg-yapo-blue/5 px-4 py-2 text-sm font-medium text-yapo-blue transition-[transform,background] active:scale-95 active:bg-yapo-blue/10"
+                >
+                  Chat 1-1
+                </a>
+                <a
+                  href="/chat/group?roomId=group-demo&name=Equipo%20YAPÓ"
+                  className="inline-flex items-center gap-2 rounded-xl border-2 border-yapo-blue/30 bg-yapo-blue/5 px-4 py-2 text-sm font-medium text-yapo-blue transition-[transform,background] active:scale-95 active:bg-yapo-blue/10"
+                >
+                  Chat grupal
+                </a>
+              </div>
+            </div>
           </div>
         </>
       )}
     </div>
+  );
+}
+
+function BackIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
+      <path d="M19 12H5M12 19l-7-7 7-7" />
+    </svg>
   );
 }
 

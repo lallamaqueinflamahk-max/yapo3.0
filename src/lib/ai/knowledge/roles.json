@@ -1,0 +1,38 @@
+[
+  {
+    "id": "role-vale",
+    "type": "role",
+    "name": "Valé",
+    "description": "Usuario básico. Creá tu perfil laboral, subí videos/fotos de desempeño y participá del feed de tu categoría.",
+    "keywords": ["valé", "vale", "usuario básico", "rol", "perfil laboral", "desempeño", "feed", "trabajos cercanos"],
+    "screen": "/profile",
+    "suggestedActions": ["Ver mi perfil", "Buscar trabajos en Inicio", "Subir video de desempeño"]
+  },
+  {
+    "id": "role-capeto",
+    "type": "role",
+    "name": "Capeto",
+    "description": "Todo lo de Valé más liderar una pequeña cuadrilla de Valés.",
+    "keywords": ["capeto", "cuadrilla", "liderar", "equipo", "métricas", "mini-retos"],
+    "screen": "/home",
+    "suggestedActions": ["Ver cuadrilla en Inicio", "Validar desempeño del equipo", "Crear mini-reto"]
+  },
+  {
+    "id": "role-kavaju",
+    "type": "role",
+    "name": "Kavaju",
+    "description": "Todo lo del Capeto más supervisar varias cuadrillas de una zona.",
+    "keywords": ["kavaju", "supervisor", "zona", "moderar", "reportes", "incentivos"],
+    "screen": "/home",
+    "suggestedActions": ["Ver reportes de zona", "Moderar contenido", "Gestionar incentivos"]
+  },
+  {
+    "id": "role-mbarete",
+    "type": "role",
+    "name": "Mbareté",
+    "description": "Máximo nivel. Control territorial, Beca Laboral, Semáforo de Gestión.",
+    "keywords": ["mbareté", "mbarete", "territorio", "beca laboral", "semáforo", "gestión territorial"],
+    "screen": "/home",
+    "suggestedActions": ["Ver Semáforo de Gestión", "Gestionar Beca Laboral", "Ver mapa de rendimiento"]
+  }
+]

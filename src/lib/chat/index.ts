@@ -6,6 +6,11 @@ export {
   type OutgoingEvent,
 } from "./socket";
 export {
+  createChatService,
+  type ChatServiceHandle,
+  type TypingPayload,
+} from "./ChatService";
+export {
   useChat,
   useMessages,
   usePresence,

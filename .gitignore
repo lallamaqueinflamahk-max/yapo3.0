@@ -19,14 +19,18 @@ build/
 *.tsbuildinfo
 next-env.d.ts
 
+# IDE / local
+.cursor/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env
+# env (mantener .env.example en el repo)
 .env*
+!.env.example
 .env.local
 .env.production.local
 

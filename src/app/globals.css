@@ -7,9 +7,17 @@
   --color-foreground: var(--foreground);
   --color-yapo-red: var(--yapo-red);
   --color-yapo-red-dark: var(--yapo-red-dark);
+  --color-yapo-red-light: var(--yapo-red-light);
   --color-yapo-white: var(--yapo-white);
   --color-yapo-blue: var(--yapo-blue);
   --color-yapo-blue-dark: var(--yapo-blue-dark);
+  --color-yapo-blue-light: var(--yapo-blue-light);
+  --color-yapo-blue-soft: var(--yapo-blue-soft);
+  --color-yapo-amber: var(--yapo-amber);
+  --color-yapo-amber-dark: var(--yapo-amber-dark);
+  --color-yapo-amber-light: var(--yapo-amber-light);
+  --color-yapo-emerald: var(--yapo-emerald);
+  --color-yapo-emerald-light: var(--yapo-emerald-light);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
