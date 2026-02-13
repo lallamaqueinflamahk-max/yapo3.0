@@ -5,7 +5,7 @@
  * y confirma. Se genera el Contrato Flash y se muestra; link a descarga PDF cuando exista.
  * Ver docs/product/CONTRATO-FLASH-Y-MODULO-CONTRATACION.md
  */
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { useSession } from "@/lib/auth";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -30,7 +30,7 @@ const DEFAULT_PROPUESTA = {
   penalidadDescripcion: "50.000 PYG",
 };
 
-export default function AceptarTrabajoPage() {
+function AceptarTrabajoContent() {
   const { identity } = useSession();
   const searchParams = useSearchParams();
   const [me, setMe] = useState<MeData | null>(null);
@@ -319,5 +319,13 @@ export default function AceptarTrabajoPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function AceptarTrabajoPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-yapo-white p-4 flex items-center justify-center"><p className="text-foreground/70">Cargando...</p></div>}>
+      <AceptarTrabajoContent />
+    </Suspense>
   );
 }
