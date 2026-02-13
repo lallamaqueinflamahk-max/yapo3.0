@@ -43,17 +43,11 @@ function kbResultToCerebroResult(best: KnowledgeSearchResult): CerebroResult {
       ? `${best.content.slice(0, MAX_KB_MESSAGE_LENGTH).trim()}…`
       : best.content;
 
-  const actions: CerebroAction[] = (best.suggestedActions ?? [])
-    .map((label) => {
-      const screen = labelToScreen.get(label.trim());
-      if (!screen) return null;
-      return {
-        type: "NAVIGATE" as const,
-        payload: { screen },
-        label,
-      };
-    })
-    .filter((a): a is CerebroAction => a !== null);
+  const actions: CerebroAction[] = (best.suggestedActions ?? []).flatMap((label) => {
+    const screen = labelToScreen.get(label.trim());
+    if (!screen) return [];
+    return [{ type: "NAVIGATE" as const, payload: { screen }, label }];
+  });
 
   return {
     message,
