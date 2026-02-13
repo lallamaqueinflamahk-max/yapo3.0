@@ -1,11 +1,20 @@
 "use client";
 
-import GroupChat from "../GroupChat";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 /**
- * Ruta: /chat/group?roomId=xxx&name=NombreGrupo
- * Chat grupal conectado a WebSocket (NEXT_PUBLIC_WS_URL).
+ * Chat grupal eliminado: solo WhatsApp.
+ * Redirige a /chat (pantalla WhatsApp).
  */
 export default function GroupChatPage() {
-  return <GroupChat />;
+  const router = useRouter();
+  useEffect(() => {
+    router.replace("/chat");
+  }, [router]);
+  return (
+    <div className="flex min-h-[50vh] items-center justify-center text-foreground/70">
+      Redirigiendo a mensajes…
+    </div>
+  );
 }
