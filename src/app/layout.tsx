@@ -20,12 +20,16 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   title: "YAPÓ 3.0",
   description: "Plataforma de identidad, reputación y confianza",
   manifest: "/manifest.json",
   appleWebApp: { capable: true, title: "YAPÓ 3.0" },
-  viewport: { width: "device-width", initialScale: 1 },
   icons: {
     icon: "/images/icon.png",
     apple: "/images/icon.png",
