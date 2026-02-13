@@ -155,6 +155,7 @@ async function main() {
   }
 
   // 9. Geografía Paraguay (barrios con slug para mapa GPS) + Rubros + Métricas semáforo
+  try {
   const barriosGeo = [
     { slug: "asuncion-botanic", departamento: "Central", ciudad: "Asunción", barrioNombre: "Botánico", lat: -25.282, lng: -57.575 },
     { slug: "asuncion-sajonia", departamento: "Central", ciudad: "Asunción", barrioNombre: "Sajonia", lat: -25.278, lng: -57.568 },
