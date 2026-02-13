@@ -44,12 +44,12 @@ export async function PATCH(request: Request) {
     profileStatus?: string;
   } = {};
 
-  if (body.country !== undefined) data.country = String(body.country).trim() || null;
-  if (body.territory !== undefined) data.territory = String(body.territory).trim() || null;
-  if (body.workStatus !== undefined) data.workStatus = String(body.workStatus).trim() || null;
-  if (body.workType !== undefined) data.workType = String(body.workType).trim() || null;
-  if (body.education !== undefined) data.education = String(body.education).trim() || null;
-  if (body.certifications !== undefined) data.certifications = String(body.certifications).trim() || null;
+  if (body.country !== undefined) data.country = String(body.country).trim() || undefined;
+  if (body.territory !== undefined) data.territory = String(body.territory).trim() || undefined;
+  if (body.workStatus !== undefined) data.workStatus = String(body.workStatus).trim() || undefined;
+  if (body.workType !== undefined) data.workType = String(body.workType).trim() || undefined;
+  if (body.education !== undefined) data.education = String(body.education).trim() || undefined;
+  if (body.certifications !== undefined) data.certifications = String(body.certifications).trim() || undefined;
 
   const merged = {
     country: data.country ?? undefined,
