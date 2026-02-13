@@ -29,8 +29,8 @@ export default function VoiceButton({
   "aria-label": ariaLabel = "Usar voz",
 }: VoiceButtonProps) {
   const captureRef = useRef<ReturnType<typeof createVoiceCapture> | null>(null);
-  const onTranscriptRef = useRef(onTranscript);
-  const onInterimRef = useRef(onInterim);
+  const onTranscriptRef = useRef<(t: string) => void>(onTranscript);
+  const onInterimRef = useRef<(t: string) => void>(onInterim ?? (() => {}));
   const [isListening, setIsListening] = useState(false);
 
   onTranscriptRef.current = onTranscript;
@@ -41,9 +41,9 @@ export default function VoiceButton({
     captureRef.current = capture;
     capture.onTranscript((result: TranscriptResult) => {
       if (result.isFinal && result.text.trim()) {
-        onTranscriptRef.current?.(result.text.trim());
+        onTranscriptRef.current(result.text.trim());
       } else if (!result.isFinal) {
-        onInterimRef.current?.(result.text);
+        onInterimRef.current(result.text);
       }
     });
     return () => {
