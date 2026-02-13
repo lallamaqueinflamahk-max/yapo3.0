@@ -6,6 +6,7 @@
  */
 
 import type { CerebroContext, CerebroResult, CerebroAction } from "@/lib/ai/cerebro";
+import type { CerebroContext as RunContext, CerebroRole } from "@/lib/ai/cerebro/types";
 import { searchKnowledgeBase, actions as kbActions } from "@/data/knowledge-base";
 import type { KnowledgeSearchResult } from "@/data/knowledge-base";
 import type { ActionEntry } from "@/data/knowledge-base";
@@ -94,5 +95,10 @@ export async function processInput({
   }
 
   const inferredIntent = await inferIntent(text, context);
-  return runCerebroWithIntent(inferredIntent, context);
+  const runContext: RunContext = {
+    userId: context.user?.userId ?? "",
+    role: (context.roles?.[0] ?? "cliente") as CerebroRole,
+    currentScreen: context.screen,
+  };
+  return runCerebroWithIntent(inferredIntent, runContext);
 }
