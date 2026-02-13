@@ -7,36 +7,12 @@
 import { NextResponse } from "next/server";
 import { getAIMode } from "@/lib/ai/config";
 import { processInput } from "@/ai";
-import type { CerebroContext as ApiCerebroContext } from "@/lib/ai/cerebroContext";
-import type { CerebroContext as RunCerebroContext } from "@/lib/ai/cerebro";
-import type { CerebroRole } from "@/lib/ai/cerebro";
+import type { CerebroContext } from "@/lib/ai/cerebroContext";
 import type { CerebroResponse, CerebroResponseAction } from "@/lib/ai/types/cerebroResponse";
-
-const CEREBRO_ROLES: CerebroRole[] = [
-  "vale",
-  "capeto",
-  "kavaju",
-  "mbarete",
-  "cliente",
-  "pyme",
-  "enterprise",
-];
 
 export interface ApiAiBody {
   query: string;
-  context: ApiCerebroContext;
-}
-
-function toRunContext(context: ApiCerebroContext): RunCerebroContext {
-  const roleRaw = context.roles?.[0] ?? "vale";
-  const role: CerebroRole = CEREBRO_ROLES.includes(roleRaw as CerebroRole)
-    ? (roleRaw as CerebroRole)
-    : "vale";
-  return {
-    userId: context.user?.userId ?? "",
-    role,
-    currentScreen: context.screen,
-  };
+  context: CerebroContext;
 }
 
 function cerebroResultToResponse(
@@ -101,8 +77,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const runContext = toRunContext(context);
-    const result = await processInput({ text: q, context: runContext });
+    const result = await processInput({ text: q, context });
     const source = result.state?.fromKb ? "local" : "openai";
     const response = cerebroResultToResponse(result, source);
     return NextResponse.json(response);
