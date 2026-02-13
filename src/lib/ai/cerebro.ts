@@ -115,4 +115,4 @@ export type {
   WebSpeechAPIHandle,
   SpeechSynthesisAPIHandle,
 };
-export type { CerebroResult, CerebroAction, CerebroRole } from "./cerebro/index";
+export type { CerebroResult, CerebroAction, CerebroRole, CerebroIntent } from "./cerebro/index";

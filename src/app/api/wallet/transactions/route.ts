@@ -4,19 +4,19 @@
  * SAFE MODE: transacciones del ledger en memoria, devOnly: true.
  */
 
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { validateWalletAccess } from "@/lib/wallet-db/guard";
 import { getTransactions as getTransactionsDb } from "@/lib/wallet-db/service";
 import { getTransactions as getTransactionsMemory } from "@/lib/wallet/ledger";
 import { SAFE_MODE_ENABLED } from "@/lib/auth/dev/safeMode";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const access = await validateWalletAccess();
   if (!access.allowed || !access.userId) {
     return NextResponse.json({ error: access.reason ?? "Acceso denegado" }, { status: 403 });
   }
 
-  const limit = Math.min(Number(request.nextUrl.searchParams.get("limit")) || 50, 100);
+  const limit = Math.min(Number(request.nextUrl?.searchParams.get("limit")) || 50, 100);
 
   if (SAFE_MODE_ENABLED && access.safeMode) {
     const userId = access.userId;
