@@ -4,6 +4,8 @@
  * Devuelve siempre JSON en errores para evitar ClientFetchError (HTML inesperado).
  */
 
+import type { NextRequest } from "next/server";
+
 function jsonResponse(body: object, status: number) {
   return new Response(JSON.stringify(body), {
     status,
@@ -14,7 +16,7 @@ function jsonResponse(body: object, status: number) {
 async function safeGet(req: Request) {
   try {
     const { handlers } = await import("@/lib/auth-next/config");
-    const res = await handlers.GET(req);
+    const res = await handlers.GET(req as NextRequest);
     if (res.status >= 400 && res.headers.get("Content-Type")?.includes("text/html")) {
       return jsonResponse({ error: "Auth request failed" }, res.status);
     }
@@ -28,7 +30,7 @@ async function safeGet(req: Request) {
 async function safePost(req: Request) {
   try {
     const { handlers } = await import("@/lib/auth-next/config");
-    const res = await handlers.POST(req);
+    const res = await handlers.POST(req as NextRequest);
     if (res.status >= 400 && res.headers.get("Content-Type")?.includes("text/html")) {
       return jsonResponse({ error: "Auth request failed" }, res.status);
     }
