@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { IconCerebro } from "@/components/icons";
+import { IconBuscar } from "@/components/icons";
 import type { DashboardConfig } from "@/lib/adaptive-ui";
 
 interface CerebroBarCompactProps {
@@ -22,11 +22,11 @@ export default function CerebroBarCompact({ placeholder, config }: CerebroBarCom
   return (
     <Link
       href="/cerebro"
-      className="flex min-h-[48px] w-full items-center gap-3 rounded-xl border-2 border-yapo-blue/25 bg-yapo-white px-4 py-2.5 shadow-sm transition-[border-color,background,box-shadow] active:border-yapo-blue/50 active:bg-yapo-blue-light/30 active:shadow-inner"
+      className="nav-card-interactive flex min-h-[48px] w-full items-center gap-3 rounded-xl border-2 border-yapo-blue/30 bg-yapo-white px-4 py-2.5 shadow-md hover:border-yapo-cta/40 hover:bg-yapo-cta/5 hover:shadow-lg"
       aria-label={text}
     >
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-yapo-blue/15 text-yapo-blue">
-        <IconCerebro className="h-5 w-5" />
+      <span className="flex h-14 w-14 shrink-0 items-center justify-center">
+        <IconBuscar className="h-14 w-14" />
       </span>
       <span className="flex-1 text-left text-sm text-foreground/70">{text}</span>
       <span className="text-yapo-blue/60" aria-hidden>

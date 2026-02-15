@@ -88,7 +88,7 @@ Análisis de la plataforma web desde perspectiva de **arquitectura de informaci�
 
 3. **QuickActionBar vs Chips de Intención**  
    - Chips: Mi Billetera, Transferir, Activar Escudo, Mensajes.  
-   - QuickActionBar: acciones por rol (Chamba, Calificación, Escudos, Beneficios, etc.).  
+   - QuickActionBar: acciones por rol (Trabajo, Calificación, Escudos, Beneficios, etc.).  
    - Hay solapamiento conceptual (Escudos, Billetera).  
    - **Recomendación**: Unificar en una sola barra de atajos por rol o separar claramente "Acciones rápidas" (4 chips) vs "Tu panel" (cuadrantes).
 

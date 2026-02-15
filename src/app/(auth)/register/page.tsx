@@ -19,7 +19,7 @@ export default function RegisterPage() {
     return (
       <main className="flex min-h-[50vh] flex-col items-center justify-center gap-4 px-4">
         <p className="text-center text-foreground/80">En SAFE MODE no es necesario registrarse.</p>
-        <Link href="/home" className="rounded-xl bg-[var(--yapo-blue)] px-6 py-3 font-medium text-[var(--yapo-white)]">
+        <Link href="/home" className="btn-interactive inline-block rounded-xl bg-yapo-petroleo px-6 py-3 font-semibold text-yapo-white shadow-md border-2 border-yapo-petroleo/80 hover:brightness-110">
           Ir al inicio
         </Link>
       </main>
@@ -118,7 +118,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full min-h-[48px] rounded-xl bg-[var(--yapo-red)] font-semibold text-[var(--yapo-white)] transition active:scale-[0.98] disabled:opacity-60"
+            className="btn-interactive w-full min-h-[48px] rounded-xl bg-yapo-cta font-semibold text-yapo-white shadow-md border-2 border-yapo-cta-hover/50 hover:bg-yapo-cta-hover disabled:opacity-60"
           >
             {loading ? "Creando cuenta…" : "Crear mi cuenta"}
           </button>

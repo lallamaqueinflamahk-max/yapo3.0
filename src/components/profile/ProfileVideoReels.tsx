@@ -9,7 +9,7 @@ import Link from "next/link";
 export default function ProfileVideoReels() {
   return (
     <section className="rounded-2xl border border-yapo-blue/15 bg-yapo-white p-4" aria-label="Videos y promoción">
-      <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-yapo-blue/80">
+      <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-yapo-petroleo">
         Videos (formato reels)
       </h2>
       <p className="text-sm text-foreground/80">

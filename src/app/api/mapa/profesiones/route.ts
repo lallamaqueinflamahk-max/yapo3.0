@@ -29,6 +29,7 @@ const RUBRO_ICON: Record<string, string> = {
   "Contador": "💼",
   "Limpieza": "🧹",
   "Albañil": "🧱",
+  "Costurera": "🧵",
   "Albañilería": "🧱",
   "Refrigeración": "❄️",
   "Gasista": "🔥",

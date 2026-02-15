@@ -36,27 +36,27 @@ export default function ProfilePersonalData(props: ProfilePersonalDataProps) {
 
   if (entries.length === 0) {
     return (
-      <section className="rounded-2xl border border-yapo-blue/15 bg-yapo-white p-4" aria-label="Datos personales">
-        <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-yapo-blue/80">
+      <section className="rounded-2xl border border-yapo-blue/20 bg-gradient-to-b from-yapo-white to-yapo-blue-light/20 p-4" aria-label="Datos personales">
+        <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-yapo-petroleo">
           Datos personales
         </h2>
-        <p className="text-sm text-foreground/70">Completá tu perfil para que se muestren aquí.</p>
+        <p className="text-sm text-gris-texto">Completá tu perfil para que se muestren aquí.</p>
       </section>
     );
   }
 
   return (
-    <section className="rounded-2xl border border-yapo-blue/15 bg-yapo-white p-4" aria-label="Datos personales">
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-yapo-blue/80">
+    <section className="rounded-2xl border border-yapo-blue/20 bg-gradient-to-b from-yapo-white to-yapo-blue-light/20 p-4" aria-label="Datos personales">
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-yapo-petroleo">
         Datos personales
       </h2>
       <dl className="grid gap-2">
-        {entries.map(([key, value]) => (
-          <div key={key} className="flex flex-col gap-0.5 sm:flex-row sm:gap-2">
-            <dt className="text-xs font-medium text-foreground/60 min-w-[140px]">
+        {entries.map(([key, value], i) => (
+          <div key={key} className={`flex flex-col gap-0.5 sm:flex-row sm:gap-2 rounded-lg px-3 py-2 ${i % 2 === 0 ? "bg-yapo-blue-light/20" : "bg-yapo-white/80"}`}>
+            <dt className="text-xs font-semibold text-yapo-blue min-w-[140px]">
               {LABELS[key as keyof typeof LABELS] ?? key}
             </dt>
-            <dd className="text-sm text-foreground/90">{String(value)}</dd>
+            <dd className="text-sm font-medium text-yapo-petroleo">{String(value)}</dd>
           </div>
         ))}
       </dl>

@@ -67,7 +67,7 @@ export default function MessageInput({
       <button
         type="submit"
         disabled={disabled || !text.trim()}
-        className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl bg-yapo-red font-semibold text-yapo-white transition-[transform] active:scale-95 disabled:opacity-50"
+        className="btn-interactive flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl bg-yapo-cta font-semibold text-yapo-white shadow-md border-2 border-yapo-cta-hover/50 hover:bg-yapo-cta-hover disabled:opacity-50"
         aria-label="Enviar"
       >
         <SendIcon className="h-5 w-5" />

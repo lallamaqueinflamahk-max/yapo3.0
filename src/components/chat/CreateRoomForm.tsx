@@ -62,14 +62,14 @@ export default function CreateRoomForm({ onCreate, onCancel }: CreateRoomFormPro
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 rounded-xl border-2 border-yapo-blue/30 bg-yapo-white py-2 text-sm font-medium text-yapo-blue active:scale-[0.98]"
+          className="btn-interactive flex-1 rounded-xl border-2 border-yapo-blue/40 bg-yapo-white py-2 text-sm font-semibold text-yapo-blue shadow-sm hover:bg-yapo-blue/10"
         >
           Cancelar
         </button>
         <button
           type="submit"
           disabled={!name.trim()}
-          className="flex-1 rounded-xl bg-yapo-red py-2 text-sm font-semibold text-yapo-white active:scale-[0.98] disabled:opacity-50"
+          className="btn-interactive flex-1 rounded-xl bg-yapo-cta py-2 text-sm font-semibold text-yapo-white shadow-md border-2 border-yapo-cta-hover/50 hover:bg-yapo-cta-hover disabled:opacity-50"
         >
           Crear
         </button>

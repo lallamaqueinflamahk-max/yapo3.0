@@ -186,7 +186,7 @@ function ReleaseButton({
         type="button"
         onClick={handleClick}
         disabled={loading}
-        className="min-h-[36px] rounded-lg border border-emerald-400 bg-emerald-100 px-3 py-1.5 text-xs font-medium text-emerald-800 transition-[transform] active:scale-95 disabled:opacity-70"
+        className="btn-interactive min-h-[36px] rounded-lg border-2 border-emerald-400 bg-emerald-100 px-3 py-1.5 text-xs font-semibold text-emerald-800 shadow-sm hover:bg-emerald-200 disabled:opacity-70"
       >
         {loading ? "…" : "Liberar"}
       </button>
@@ -224,7 +224,7 @@ function BlockButton({
       type="button"
       onClick={handleClick}
       disabled={loading}
-      className="min-h-[36px] rounded-lg border border-yapo-red/40 bg-yapo-red/10 px-3 py-1.5 text-xs font-medium text-yapo-red-dark transition-[transform] active:scale-95 disabled:opacity-70"
+      className="btn-interactive min-h-[36px] rounded-lg border-2 border-yapo-red/50 bg-yapo-red/10 px-3 py-1.5 text-xs font-semibold text-yapo-red-dark shadow-sm hover:bg-yapo-red/20 disabled:opacity-70"
     >
       {loading ? "…" : "Bloquear"}
     </button>

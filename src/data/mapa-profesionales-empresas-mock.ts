@@ -24,6 +24,8 @@ export interface ProfesionalEnZona {
   workHistory?: string;
   /** Sello Profesional Matriculado (ANDE, MOPC) — Filtro Mbareté. */
   matriculado?: "ANDE" | "MOPC";
+  /** Teléfono WhatsApp para contacto directo (ej. 0981123456). */
+  whatsapp?: string | null;
 }
 
 export interface EmpresaEnZona {
@@ -42,8 +44,8 @@ export interface EmpresaEnZona {
 
 const PROFESIONALES_POR_BARRIO: Record<string, ProfesionalEnZona[]> = {
   "asuncion-botanic": [
-    { userId: "prof-1", name: "Juan P.", profession: "Electricista", rating: 4.8, image: null, role: "Valé", verified: true, barrioId: "asuncion-botanic", documentVerified: true, badges: ["Top rated", "Puntual", "Certificado"], videoCount: 4, workHistory: "5 años en el rubro", matriculado: "ANDE" },
-    { userId: "prof-2", name: "María G.", profession: "Limpieza", rating: 4.5, image: null, role: "Capeto", verified: true, barrioId: "asuncion-botanic", documentVerified: true, badges: ["Recomendada", "Cliente frecuente"], videoCount: 2, workHistory: "3 años" },
+    { userId: "prof-1", name: "Juan P.", profession: "Electricista", rating: 4.8, image: null, role: "Valé", verified: true, barrioId: "asuncion-botanic", documentVerified: true, badges: ["Top rated", "Puntual", "Certificado"], videoCount: 4, workHistory: "5 años en el rubro", matriculado: "ANDE", whatsapp: "0981123456" },
+    { userId: "prof-2", name: "María G.", profession: "Limpieza", rating: 4.5, image: null, role: "Capeto", verified: true, barrioId: "asuncion-botanic", documentVerified: true, badges: ["Recomendada", "Cliente frecuente"], videoCount: 2, workHistory: "3 años", whatsapp: "0981987654" },
     { userId: "prof-3", name: "Carlos R.", profession: "Plomería", rating: 4.2, image: null, role: "Valé", verified: false, barrioId: "asuncion-botanic", documentVerified: false, badges: [], videoCount: 1, workHistory: "1 año", matriculado: "MOPC" },
   ],
   "asuncion-sajonia": [
@@ -107,13 +109,15 @@ function generarProfesionalesFicticios(barrioId: string): ProfesionalEnZona[] {
       const verified = seed % 3 === 0;
       const documentVerified = seed % 4 === 0;
       const matriculado = oficio === "Electricista" && i === 0 ? "ANDE" : oficio === "Plomería" && i === 1 ? "MOPC" : undefined;
+      const role = seed % 3 === 0 ? "Capeto" : seed % 3 === 1 ? "Kavaju" : "Valé";
+      const whatsapp = seed % 2 === 0 ? `0981${String(100000 + (seed % 900000))}` : undefined;
       list.push({
         userId: `mock-${barrioId}-${oficio.replace(/\s+/g, "-")}-${i}`,
         name: `${nombre} ${apellido}.`,
         profession: oficio,
         rating: Math.round(rating * 10) / 10,
         image: null,
-        role: "Valé",
+        role,
         verified,
         barrioId,
         documentVerified,
@@ -121,6 +125,7 @@ function generarProfesionalesFicticios(barrioId: string): ProfesionalEnZona[] {
         videoCount: (seed % 4),
         workHistory: `${(seed % 8) + 1} años`,
         matriculado,
+        whatsapp,
       });
       idx++;
     }

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { IconWallet, IconChat } from "@/components/icons";
+import { IconWallet, IconChat, IconEscudo } from "@/components/icons";
 
 /** Icono transferir (flecha) */
 function IconTransfer({ className }: { className?: string }) {
@@ -12,24 +12,15 @@ function IconTransfer({ className }: { className?: string }) {
   );
 }
 
-/** Icono escudo */
-function IconShield({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-    </svg>
-  );
-}
-
 const CHIPS = [
   { href: "/wallet", label: "Mi Billetera", Icon: IconWallet, id: "billetera" },
   { href: "/wallet#transferir", label: "Transferir", Icon: IconTransfer, id: "transferir" },
-  { href: "/escudos", label: "Activar Escudo", Icon: IconShield, id: "escudo" },
+  { href: "/escudos", label: "Activar Escudo", Icon: IconEscudo, id: "escudo" },
   { href: "/chat", label: "Mensajes", Icon: IconChat, id: "mensajes" },
 ] as const;
 
 const TOUCH_CLASS =
-  "flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center gap-2 rounded-full border border-yapo-blue/25 bg-yapo-white/90 px-4 py-2.5 text-sm font-medium text-yapo-blue shadow-sm transition-[transform,opacity] duration-75 hover:bg-yapo-blue-light/30 hover:opacity-90 active:scale-[0.98] active:opacity-100";
+  "flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center gap-2 rounded-[12px] border border-gris-ui-border bg-yapo-white px-4 py-2.5 text-sm font-semibold text-yapo-blue shadow-md transition-all duration-200 hover:bg-yapo-blue-light/50 hover:shadow-lg active:scale-[0.98]";
 
 /**
  * Chips de Intención del Header Inteligente (Layout Maestro).

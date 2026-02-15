@@ -31,7 +31,7 @@ export default function EscudosChips({ escudos, className = "" }: EscudosChipsPr
         {active.map((e) => (
           <li key={e.id}>
             <span
-              className="inline-flex min-h-[40px] items-center rounded-full border-2 border-yapo-blue/30 bg-yapo-blue/10 px-4 py-2 text-sm font-medium text-yapo-blue transition-[transform,box-shadow] active:scale-95 active:shadow-inner"
+              className="btn-interactive inline-flex min-h-[40px] items-center rounded-full border-2 border-yapo-blue/40 bg-yapo-blue/10 px-4 py-2 text-sm font-semibold text-yapo-blue shadow-sm hover:bg-yapo-blue/20"
               title={e.kind}
             >
               {ESCUDO_LABELS[e.kind] ?? e.kind}

@@ -12,7 +12,7 @@ export default function ProfileCurriculumIA() {
       className="mb-4 rounded-2xl border border-yapo-blue/15 bg-yapo-white p-4 scroll-mt-20"
       aria-label="Currículum digital con YAPÓ IA"
     >
-      <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-yapo-blue/80">
+      <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-yapo-petroleo">
         Currículum digital con YAPÓ IA
       </h2>
       <p className="mb-4 text-sm text-foreground/80">

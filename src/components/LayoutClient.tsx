@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useSession as useNextAuthSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Navbar from "./nav/Navbar";
+import HomeHeader from "./home/HomeHeader";
 import { useSession } from "@/lib/auth";
 
 // #region agent log
@@ -11,7 +12,7 @@ function _log(msg: string, data: Record<string, unknown>) {
   fetch("http://127.0.0.1:7244/ingest/cdb4230b-daff-48fe-87c3-cb3e79b1f0a1", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ location: "LayoutClient.tsx", message: msg, data, timestamp: Date.now(), sessionId: "debug-session", hypothesisId: "H2" }),
+    body: JSON.stringify({ location: "LayoutClient.tsx", message: msg, data, timestamp: Date.now(), hypothesisId: "H2" }),
   }).catch(() => {});
 }
 // #endregion
@@ -77,6 +78,13 @@ export default function LayoutClient() {
       .catch(() => setMeData({ planName: null, badges: [], verified: false }));
   }, [authSession?.user?.id]);
 
+  const isHome = pathname === "/home" || pathname === "/";
+  // #region agent log
+  fetch("http://127.0.0.1:7244/ingest/cdb4230b-daff-48fe-87c3-cb3e79b1f0a1", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ location: "LayoutClient.tsx:navbar-choice", message: "Navbar rendered", data: { pathname: pathname ?? null, navbarUsed: isHome ? "HomeHeader" : "Navbar" }, timestamp: Date.now(), hypothesisId: "H3,H4", runId: "post-fix" }) }).catch(() => {});
+  // #endregion
+  if (isHome) {
+    return <HomeHeader userImage={userImage} userName={userName} />;
+  }
   return (
     <Navbar
       userImage={userImage}

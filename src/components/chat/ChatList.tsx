@@ -27,10 +27,10 @@ export default function ChatList({
             type="button"
             onClick={() => onSelectRoom(room.id)}
             aria-current={currentRoomId === room.id}
-            className={`w-full rounded-xl px-4 py-3 text-left transition-colors ${
+            className={`nav-card-interactive w-full rounded-xl border-2 px-4 py-3 text-left ${
               currentRoomId === room.id
-                ? "bg-yapo-blue/20 text-yapo-blue font-medium"
-                : "bg-yapo-white hover:bg-yapo-blue/5 text-foreground"
+                ? "border-yapo-cta/50 bg-yapo-cta/15 text-yapo-cta font-semibold"
+                : "border-transparent bg-yapo-white hover:border-yapo-blue/30 hover:bg-yapo-blue/5 text-foreground"
             }`}
           >
             <p className="text-sm font-medium truncate">{room.name}</p>

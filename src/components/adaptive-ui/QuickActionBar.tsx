@@ -5,12 +5,13 @@ import Link from "next/link";
 import type { DashboardConfig, MainActionId } from "@/lib/adaptive-ui";
 import IconHome from "@/components/icons/IconHome";
 import IconWallet from "@/components/icons/IconWallet";
+import IconEscudo from "@/components/icons/IconEscudo";
 import IconCerebro from "@/components/icons/IconCerebro";
 import IconChat from "@/components/icons/IconChat";
 import IconProfile from "@/components/icons/IconProfile";
 
 const ACTION_ID_TO_ROUTE: Record<MainActionId, string> = {
-  Buscar_Chamba: "/mapa",
+  Buscar_Trabajo: "/mapa",
   Mi_Calificacion: "/profile",
   Mis_Escudos: "/escudos",
   Beneficios_Sponsors: "/comunidad",
@@ -28,7 +29,7 @@ const ACTION_ID_TO_ROUTE: Record<MainActionId, string> = {
 };
 
 const ACTION_ID_TO_LABEL: Record<MainActionId, string> = {
-  Buscar_Chamba: "Chamba",
+  Buscar_Trabajo: "Trabajo",
   Mi_Calificacion: "Calificación",
   Mis_Escudos: "Escudos",
   Beneficios_Sponsors: "Beneficios",
@@ -46,9 +47,9 @@ const ACTION_ID_TO_LABEL: Record<MainActionId, string> = {
 };
 
 const ACTION_ID_TO_ICON: Record<MainActionId, React.ComponentType<{ className?: string }>> = {
-  Buscar_Chamba: IconHome,
+  Buscar_Trabajo: IconHome,
   Mi_Calificacion: IconProfile,
-  Mis_Escudos: IconWallet,
+  Mis_Escudos: IconEscudo,
   Beneficios_Sponsors: IconChat,
   Mis_Ruedas: IconHome,
   Mi_Territorio: IconHome,
@@ -58,7 +59,7 @@ const ACTION_ID_TO_ICON: Record<MainActionId, React.ComponentType<{ className?: 
   Filtro_Talentos: IconProfile,
   Gestion_Pagos: IconWallet,
   Analytics_Marca: IconHome,
-  Escudo_Lider: IconWallet,
+  Escudo_Lider: IconEscudo,
   Gestion_Liquidez: IconWallet,
   Mapa_Territorio: IconHome,
 };

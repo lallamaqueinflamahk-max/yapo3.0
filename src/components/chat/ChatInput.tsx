@@ -69,7 +69,7 @@ export default function ChatInput({
         type="submit"
         disabled={disabled || !text.trim()}
         aria-label="Enviar"
-        className="min-h-[48px] min-w-[48px] rounded-2xl bg-yapo-red font-semibold text-yapo-white transition-[transform] active:scale-95 disabled:opacity-50"
+        className="btn-interactive min-h-[48px] min-w-[48px] rounded-2xl bg-yapo-cta font-semibold text-yapo-white shadow-md border-2 border-yapo-cta-hover/50 hover:bg-yapo-cta-hover disabled:opacity-50"
       >
         Enviar
       </button>

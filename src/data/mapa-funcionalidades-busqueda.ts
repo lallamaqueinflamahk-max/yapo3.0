@@ -358,6 +358,7 @@ export const OFICIOS_20: readonly string[] = [
   "Contador",
   "Cuidado personas",
   "Albañil",
+  "Costurera",
   "Refrigeración",
   "Gasista",
   "Albañilería",
@@ -365,6 +366,31 @@ export const OFICIOS_20: readonly string[] = [
   "Lavado y planchado",
   "IT / Soporte",
 ];
+
+/** Icono por oficio para UI del mapa (emoji). */
+export const OFICIOS_ICON: Record<string, string> = {
+  "Empleada doméstica": "🧹",
+  "Electricista": "⚡",
+  "Plomería": "🔧",
+  "Carpintero": "🪚",
+  "Pintor": "🎨",
+  "Jardinería": "🌿",
+  "Panadero": "🍞",
+  "Cuidado personas": "❤️",
+  "Delivery": "🛵",
+  "Mecánico": "🚗",
+  "Ventas": "📊",
+  "Contador": "💼",
+  "Limpieza": "🧹",
+  "Albañil": "🧱",
+  "Costurera": "🧵",
+  "Albañilería": "🧱",
+  "Refrigeración": "❄️",
+  "Gasista": "🔥",
+  "Niñera": "👶",
+  "Lavado y planchado": "👕",
+  "IT / Soporte": "💻",
+};
 
 /** Categorías destacadas para chips (alias de OFICIOS_20 para compatibilidad). */
 export const CATEGORIAS_DESTACADAS: readonly string[] = OFICIOS_20;

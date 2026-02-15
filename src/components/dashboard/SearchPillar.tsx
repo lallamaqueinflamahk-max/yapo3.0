@@ -63,9 +63,11 @@ export default function SearchPillar({
         <button
           type="button"
           onClick={onQuerySubmit}
-          className="w-full rounded-xl bg-yapo-blue py-2.5 text-sm font-semibold text-white transition-[transform,background] active:scale-[0.99] active:bg-yapo-blue-dark"
+          aria-label="Buscar"
+          className="btn-interactive flex h-14 w-full items-center justify-center rounded-xl bg-yapo-cta py-2.5 shadow-md border-2 border-yapo-cta-hover/50 hover:bg-yapo-cta-hover"
         >
-          Buscar
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/icon-buscar.png" alt="" className="h-10 w-auto max-w-[120px] object-contain" />
         </button>
       )}
 

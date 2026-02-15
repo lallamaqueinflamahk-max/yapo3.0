@@ -1,19 +1,15 @@
-/** Icono personalizado YAPÓ: Billetera (sobre con franja) */
+/** Icono YAPÓ: Billetera (imagen unificada en toda la app) */
+const BILLETERA_ICON = "/images/icon-billetera.png";
+
 export default function IconWallet({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden
-    >
-      <rect x="2" y="5" width="20" height="14" rx="2" />
-      <path d="M2 9h20" />
-      <path d="M16 13h.01" />
-    </svg>
+    <span className={`inline-block shrink-0 ${className ?? "h-6 w-6"}`} aria-hidden>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={BILLETERA_ICON}
+        alt=""
+        className="h-full w-full object-contain"
+      />
+    </span>
   );
 }

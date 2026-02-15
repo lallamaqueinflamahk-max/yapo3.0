@@ -54,3 +54,41 @@ export const BARRIO_COORDS: Record<string, BarrioCoords> = {
 export function getPuntosMapaReal(): BarrioCoords & { id: string }[] {
   return Object.entries(BARRIO_COORDS).map(([id, c]) => ({ id, ...c }));
 }
+
+/** Tipo de punto de barrio para Google Maps (con datos opcionales de segmentación/saturación). */
+export interface BarrioPointForMap {
+  id: string;
+  lat: number;
+  lng: number;
+  name: string;
+  state: "green" | "yellow" | "red";
+  countByOficio?: number;
+  totalProfesionales?: number;
+  demanda?: number;
+}
+
+/** Convierte getPuntosMapaReal() a BarrioPointForMap y opcionalmente enriquece un barrio con counts. */
+export function getBarrioPointsForMap(enrich?: {
+  barrioId: string;
+  countByOficio?: number;
+  totalProfesionales?: number;
+}): BarrioPointForMap[] {
+  const points = getPuntosMapaReal().map((p) => ({
+    id: p.id,
+    lat: p.lat,
+    lng: p.lng,
+    name: p.name,
+    state: p.state,
+  }));
+  if (enrich) {
+    const idx = points.findIndex((q) => q.id === enrich.barrioId);
+    if (idx >= 0) {
+      points[idx] = {
+        ...points[idx],
+        countByOficio: enrich.countByOficio,
+        totalProfesionales: enrich.totalProfesionales,
+      };
+    }
+  }
+  return points;
+}

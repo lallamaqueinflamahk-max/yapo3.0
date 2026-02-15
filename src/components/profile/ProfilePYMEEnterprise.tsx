@@ -20,7 +20,7 @@ export default function ProfilePYMEEnterprise({
 
   return (
     <section className="rounded-2xl border border-yapo-blue/15 bg-yapo-white p-4" aria-label="Datos de empresa">
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-yapo-blue/80">
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-yapo-petroleo">
         Datos verificados {role === "enterprise" ? "Enterprise" : "PyME"}
       </h2>
       <dl className="grid gap-2">
@@ -46,7 +46,7 @@ export default function ProfilePYMEEnterprise({
       {!planillaMinisterioSubida && (
         <button
           type="button"
-          className="mt-3 rounded-lg bg-yapo-blue px-3 py-2 text-sm font-medium text-yapo-white"
+          className="btn-interactive mt-3 rounded-xl bg-yapo-petroleo px-3 py-2 text-sm font-semibold text-yapo-white shadow-md border-2 border-yapo-petroleo/80 hover:brightness-110"
         >
           Cargar planillas al sistema
         </button>

@@ -53,7 +53,7 @@ export default function AcuerdosSection({
           <p className="text-sm text-foreground/60">Aún no tenés acuerdos.</p>
           <Link
             href="/trabajo/aceptar"
-            className="inline-block rounded-lg bg-yapo-blue/15 px-3 py-2 text-sm font-medium text-yapo-blue"
+            className="btn-interactive inline-block rounded-xl border-2 border-yapo-blue/40 bg-yapo-blue/15 px-3 py-2 text-sm font-semibold text-yapo-blue shadow-sm hover:bg-yapo-blue/25"
           >
             Aceptar un trabajo (generar contrato)
           </Link>

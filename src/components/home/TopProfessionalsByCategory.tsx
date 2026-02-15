@@ -137,7 +137,7 @@ export default function TopProfessionalsByCategory() {
           {/* Grid visual de profesionales: avatar, nombre, oficio, estrellas, distancia, Ver perfil */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {filtered.map((pro) => (
-              <ProfessionalCard key={pro.id} entry={pro} />
+              <TopProfessionalCard key={pro.id} entry={pro} />
             ))}
           </div>
 
@@ -155,7 +155,7 @@ export default function TopProfessionalsByCategory() {
 }
 
 /** Tarjeta visual: avatar, nombre, oficio, estrellas, distancia, un botón Ver perfil que lleva a la acción. */
-function ProfessionalCard({ entry }: { entry: TopProfessionalEntry }) {
+function TopProfessionalCard({ entry }: { entry: TopProfessionalEntry }) {
   const profileHref = `/profesionales/${entry.id}`;
 
   return (

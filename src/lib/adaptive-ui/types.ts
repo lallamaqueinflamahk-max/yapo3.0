@@ -10,7 +10,7 @@ export type SubscriptionTier = "Gratis" | "Basico" | "Premium" | "Enterprise";
 
 /** Identificador de acción principal (Paraguayo directo, corto). */
 export type MainActionId =
-  | "Buscar_Chamba"
+  | "Buscar_Trabajo"
   | "Mi_Calificacion"
   | "Mis_Escudos"
   | "Beneficios_Sponsors"

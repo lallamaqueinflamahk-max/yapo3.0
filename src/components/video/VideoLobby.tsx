@@ -58,7 +58,7 @@ export default function VideoLobby({
           <button
             type="button"
             onClick={handleCreate}
-            className="min-h-[48px] flex-1 rounded-xl bg-yapo-blue font-medium text-white transition-[transform,opacity] active:scale-[0.98] disabled:opacity-50"
+            className="btn-interactive min-h-[48px] flex-1 rounded-xl bg-yapo-cta font-semibold text-white shadow-md border-2 border-yapo-cta-hover/50 hover:bg-yapo-cta-hover disabled:opacity-50"
           >
             Crear sala
           </button>
@@ -66,7 +66,7 @@ export default function VideoLobby({
             type="button"
             onClick={handleJoin}
             disabled={!roomId.trim()}
-            className="min-h-[48px] flex-1 rounded-xl border border-white/30 bg-white/10 font-medium text-white transition-[transform,opacity] active:scale-[0.98] disabled:opacity-50"
+            className="btn-interactive min-h-[48px] flex-1 rounded-xl border-2 border-white/40 bg-white/15 font-semibold text-white shadow-sm hover:bg-white/25 disabled:opacity-50"
           >
             Unirse
           </button>

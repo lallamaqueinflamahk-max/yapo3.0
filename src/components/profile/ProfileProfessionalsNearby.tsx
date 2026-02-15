@@ -11,7 +11,7 @@ export default function ProfileProfessionalsNearby({ professionals }: ProfilePro
 
   return (
     <section className="rounded-2xl border border-yapo-blue/15 bg-yapo-white p-4" aria-label="Profesionales cerca">
-      <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-yapo-blue/80">
+      <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-yapo-petroleo">
         Profesionales cerca de mí (GPS)
       </h2>
       <p className="mb-3 text-sm text-foreground/80">
@@ -36,7 +36,7 @@ export default function ProfileProfessionalsNearby({ professionals }: ProfilePro
             </div>
             <button
               type="button"
-              className="shrink-0 rounded-lg bg-yapo-blue/20 px-3 py-1.5 text-sm font-medium text-yapo-blue"
+              className="btn-interactive shrink-0 rounded-xl border-2 border-yapo-blue/40 bg-yapo-blue/15 px-3 py-1.5 text-sm font-semibold text-yapo-blue shadow-sm hover:bg-yapo-blue/25"
             >
               Contactar
             </button>

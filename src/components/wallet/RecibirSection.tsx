@@ -39,7 +39,7 @@ export default function RecibirSection({ userId, className = "" }: RecibirSectio
         <button
           type="button"
           onClick={handleCopy}
-          className="min-h-[44px] min-w-[44px] shrink-0 rounded-xl bg-yapo-blue/15 font-medium text-yapo-blue transition-[transform,background] active:scale-95 active:bg-yapo-blue/25"
+          className="btn-interactive min-h-[44px] min-w-[44px] shrink-0 rounded-xl bg-yapo-blue/15 font-semibold text-yapo-blue shadow-sm border-2 border-yapo-blue/30 hover:bg-yapo-blue/25"
           aria-label="Copiar usuario"
         >
           {copied ? "✓" : "Copiar"}

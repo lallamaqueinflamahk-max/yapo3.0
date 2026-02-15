@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Avatar from "@/components/ui/Avatar";
+import PerfilCompletoBlock from "@/components/profile/PerfilCompletoBlock";
 import { buildWhatsAppUrl, DEFAULT_YAPO_WHATSAPP_MESSAGE } from "@/lib/whatsapp-url";
+import type { PerfilCompletoYapo } from "@/types/perfil-completo-yapo";
 
 interface PublicProfile {
   userId: string;
@@ -29,6 +31,7 @@ interface PublicProfile {
   videoCount?: number;
   workHistory?: string;
   videos?: { id: string; title: string }[];
+  perfilCompleto?: PerfilCompletoYapo | null;
 }
 
 function Stars({ rating }: { rating: number }) {
@@ -176,6 +179,9 @@ export default function PublicProfilePage({ params }: { params: Promise<{ userId
             <h3 className="text-sm font-semibold text-yapo-blue">Buscan</h3>
             <p className="mt-1 text-sm text-foreground/90">{data.buscan.join(", ")}</p>
           </div>
+        )}
+        {!data.isEmpresa && data.perfilCompleto && (
+          <PerfilCompletoBlock data={data.perfilCompleto} />
         )}
         {data.whatsapp && (
           <div className="mt-4">

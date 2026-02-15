@@ -36,7 +36,7 @@ export default function WhatsAppButton({
       target="_blank"
       rel="noopener noreferrer"
       onClick={handleClick}
-      className={`inline-flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-2.5 font-medium text-white active:opacity-90 ${className}`}
+      className={`btn-interactive inline-flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-2.5 font-semibold text-white shadow-md border-2 border-[#20BD5A] hover:brightness-110 ${className}`}
       aria-label={label + ". Se abre en otra pestaña; YAPÓ sigue aquí."}
     >
       {children ?? (

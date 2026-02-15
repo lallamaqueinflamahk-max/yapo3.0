@@ -1,34 +1,54 @@
-/* YAPÓ 3.0 - Paleta colorida y Paraguay-friendly (colores vivos y distintivos) */
+/* YAPÓ 3.0 - Paleta obligatoria PD/UX: confianza, conversión, valor en <5s */
 :root {
-  /* Oficiales bandera / marca */
-  --yapo-red: #D52B1E;
+  /* Primarios: Azul petróleo + Azul YAPO */
+  --yapo-petroleo: #0E2A47;
+  --yapo-petroleo-light: #143A5A;
+  --yapo-blue: #1F6FAF;
+  --yapo-blue-dark: #2E86C1;
+  --yapo-blue-light: #E8F4FC;
+  --yapo-blue-soft: #5BA3D9;
+  /* Secundarios: Naranja CTA, Verde validación */
+  --yapo-cta: #F57C2A;
+  --yapo-cta-hover: #FF8A3D;
+  --yapo-red: #F57C2A;
+  --yapo-red-dark: #FF8A3D;
+  --yapo-red-light: #FFF4EB;
+  --yapo-validacion: #2ECC71;
+  --yapo-validacion-dark: #27AE60;
+  --yapo-emerald: #2ECC71;
+  --yapo-emerald-light: #D5F5E3;
+  /* Grises UI y texto */
+  --gris-ui: #F2F4F7;
+  --gris-ui-border: #E5E7EB;
+  --gris-texto: #4B5563;
+  --gris-texto-light: #6B7280;
+  /* Neutros */
   --yapo-white: #FFFFFF;
-  --yapo-blue: #002395;
-  --yapo-red-dark: #b82419;
-  --yapo-blue-dark: #001d75;
-  /* Acentos vivos para UI atractiva (README: colorido, agradable, distintivos) */
-  --yapo-blue-light: #E8EEFA;
-  --yapo-blue-soft: #3d5aaf;
-  --yapo-red-light: #FCE8E6;
-  --yapo-amber: #E8A317;
-  --yapo-amber-dark: #B45309;
-  --yapo-amber-light: #FEF3C7;
-  --yapo-emerald: #059669;
-  --yapo-emerald-light: #D1FAE5;
-  --background: var(--yapo-white);
-  --foreground: #171717;
+  --background: var(--gris-ui);
+  --foreground: var(--gris-texto);
+  /* Compatibilidad */
+  --yapo-amber: #F57C2A;
+  --yapo-amber-dark: #FF8A3D;
+  --yapo-amber-light: #FFF4EB;
+  --yapo-emerald-dark: #27AE60;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   /* Mobile: evitar zoom en inputs y safe area */
   -webkit-text-size-adjust: 100%;
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 /* Ocultar scrollbar en contenedores con overflow (chips, etc.) */
+/* Títulos de recomendaciones: fuente dinámica y amigable */
+.font-recommendations {
+  font-family: var(--font-jakarta), var(--font-inter), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -110,4 +130,29 @@ body {
 .chip-count-pop {
   animation: chip-count-pop 0.3s ease-out;
   display: inline-block;
+}
+
+/* ========== Botones y navegación interactivos (toda la web) ========== */
+/* Botones: colores vivos, elevación al hover, ligero movimiento (transiciones reversibles) */
+.btn-interactive {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, filter 0.2s ease;
+}
+.btn-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(14, 42, 71, 0.2);
+}
+.btn-interactive:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Cards y cuadros de navegación: resaltar y movimiento al hover */
+.nav-card-interactive {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+.nav-card-interactive:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(14, 42, 71, 0.15);
+}
+.nav-card-interactive:active {
+  transform: translateY(-1px) scale(0.98);
 }

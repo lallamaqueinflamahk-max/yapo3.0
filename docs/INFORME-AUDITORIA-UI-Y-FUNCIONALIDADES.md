@@ -87,8 +87,8 @@ Origen: `src/components/Footer.tsx`.
 
 - **BarraBusquedaYapo**: input + micrófono (Cerebro en línea).
 - **EscudosIndicator**: estado de escudos (según rol).
-- **QuickActionBar**: acciones rápidas por rol (Buscar_Chamba, Mi_Calificacion, Mis_Escudos, Beneficios_Sponsors, Mis_Ruedas, Mi_Territorio, Panel_Ganancias, etc.) → rutas `/mapa`, `/profile`, `/escudos`, `/comunidad`, `/dashboard`, `/wallet`.
-- **DashboardQuadrants**: 4 cuadrantes por rol (trabajador: Chamba, Calificación, Escudos, Beneficios; Mbareté: Ruedas, Territorio, Ganancias, Reclutamiento; PyME/Enterprise: Vacante, Talentos, Pagos, Analytics).
+- **QuickActionBar**: acciones rápidas por rol (Buscar_Trabajo, Mi_Calificacion, Mis_Escudos, Beneficios_Sponsors, Mis_Ruedas, Mi_Territorio, Panel_Ganancias, etc.) → rutas `/mapa`, `/profile`, `/escudos`, `/comunidad`, `/dashboard`, `/wallet`.
+- **DashboardQuadrants**: 4 cuadrantes por rol (trabajador: Trabajo, Calificación, Escudos, Beneficios; Mbareté: Ruedas, Territorio, Ganancias, Reclutamiento; PyME/Enterprise: Vacante, Talentos, Pagos, Analytics).
 - **Comunidad**: enlace "Ir a Comunidad" → `/comunidad`.
 - **Más opciones**: Buscar → `/mapa`, Cerebro → `/cerebro`, Mis Escudos → `/escudos`, Planes → `/profile#planes`.
 - **CTA Billetera**: "Ir a Billetera" → `/wallet`.
@@ -216,7 +216,7 @@ Origen: `docs/ESTRUCTURA-UI-ORDEN.md`, `src/data/ui-order.ts` → `CATEGORIAS_OR
 
 ### 3.5 Acciones rápidas por rol (QuickActionBar + DashboardQuadrants)
 
-- **Trabajador (Valé, Capeto, Kavaju)**: Buscar Chamba, Mi Calificación, Mis Escudos, Beneficios/Sponsors.  
+- **Trabajador (Valé, Capeto, Kavaju)**: Buscar trabajo, Mi Calificación, Mis Escudos, Beneficios/Sponsors.  
 - **Mbareté**: Mis Ruedas, Mi Territorio, Panel Ganancias, Reclutamiento.  
 - **PyME/Enterprise**: Publicar Vacante, Filtro Talentos, Gestión Pagos, Analytics Marca.  
 - **Cliente**: Buscar Trabajadores, Mi Perfil, Seguro Colectivo, Beneficios.

@@ -10,19 +10,22 @@ import { getDashboardConfig, planSlugToTier } from "@/lib/adaptive-ui";
 import type { RoleId } from "@/lib/auth";
 import IconHome from "@/components/icons/IconHome";
 import IconWallet from "@/components/icons/IconWallet";
-import IconCerebro from "@/components/icons/IconCerebro";
+import IconBuscar from "@/components/icons/IconBuscar";
 import IconChat from "@/components/icons/IconChat";
 import IconProfile from "@/components/icons/IconProfile";
 
 const NAV_LINKS = [
-  { href: "/home", label: "Inicio", Icon: IconHome },
-  { href: "/mapa", label: "Buscar", Icon: IconHome },
-  { href: "/wallet", label: "Billetera", Icon: IconWallet },
-  { href: "/cerebro", label: "Buscador YAPÓ", Icon: IconCerebro },
-  { href: "/chat", label: "Chat", Icon: IconChat },
-  { href: "/dashboard", label: "Panel", Icon: IconHome },
-  { href: "/profile", label: "Perfil", Icon: IconProfile },
-  { href: "/profile#planes", label: "Suscripción y planes", Icon: IconProfile },
+  { id: "inicio", href: "/home", label: "Inicio", Icon: IconHome },
+  { id: "trabajos", href: "/mapa", label: "Trabajos", Icon: IconHome },
+  { id: "servicios", href: "/mapa?servicios=1", label: "Servicios", Icon: IconHome },
+  { id: "empresas", href: "/comunidad", label: "Empresas", Icon: IconHome },
+  { id: "buscar", href: "/mapa", label: "Buscar", Icon: IconBuscar },
+  { id: "billetera", href: "/wallet", label: "Billetera", Icon: IconWallet },
+  { id: "cerebro", href: "/cerebro", label: "Buscador YAPÓ", Icon: IconBuscar },
+  { id: "chat", href: "/chat", label: "Chat", Icon: IconChat },
+  { id: "panel", href: "/dashboard", label: "Panel", Icon: IconHome },
+  { id: "perfil", href: "/profile", label: "Perfil", Icon: IconProfile },
+  { id: "planes", href: "/profile#planes", label: "Suscripción y planes", Icon: IconProfile },
 ];
 
 interface NavbarProps {
@@ -76,7 +79,7 @@ export default function Navbar({ userImage, userName, showBack, title: _title = 
   return (
     <>
       <header
-        className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between gap-2 bg-yapo-blue px-3 pt-[env(safe-area-inset-top)] text-yapo-white shadow-md"
+        className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between gap-2 border-b border-gris-ui-border bg-yapo-white px-3 pt-[env(safe-area-inset-top)] shadow-sm"
         role="banner"
       >
         <div className="flex min-w-[44px] items-center justify-start">
@@ -84,7 +87,7 @@ export default function Navbar({ userImage, userName, showBack, title: _title = 
             <button
               type="button"
               onClick={handleBack}
-              className="flex h-10 w-10 items-center justify-center rounded-full active:scale-95 active:bg-white/20"
+              className="flex h-10 w-10 items-center justify-center rounded-full text-yapo-petroleo active:scale-95 active:bg-gris-ui"
               aria-label="Volver atrás"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-6 w-6">
@@ -95,7 +98,7 @@ export default function Navbar({ userImage, userName, showBack, title: _title = 
             <button
               type="button"
               onClick={() => setMenuOpen(true)}
-              className="flex h-12 w-12 items-center justify-center rounded-full active:scale-95 active:bg-white/20"
+              className="flex h-12 w-12 items-center justify-center rounded-full text-yapo-petroleo active:scale-95 active:bg-gris-ui"
               aria-label="Menú"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-9 w-9">
@@ -109,45 +112,44 @@ export default function Navbar({ userImage, userName, showBack, title: _title = 
           {escudoConfig && (
             <EscudosIndicator
               config={escudoConfig}
-              className="!border-white/40 !bg-white/20 !text-yapo-white shrink-0"
+              className="!border-yapo-cta/30 !bg-yapo-cta/10 !text-yapo-cta shrink-0"
             />
           )}
           <Link
             href="/profile"
-            className="flex min-w-0 items-center gap-2 rounded-full border border-white/30 bg-white/10 pl-1.5 pr-2 py-1 active:bg-white/20"
+            className="flex min-w-0 items-center gap-2 rounded-full border border-gris-ui-border bg-gris-ui pl-1.5 pr-2 py-1 active:bg-yapo-blue-light/30"
           >
-            <Avatar src={userImage} name={userName} size="sm" className="border-white/40 shrink-0 h-8 w-8" />
+            <Avatar src={userImage} name={userName} size="sm" className="shrink-0 h-8 w-8 border-2 border-yapo-petroleo/20 bg-yapo-blue-light/50 text-yapo-petroleo shadow-sm" />
             <div className="hidden sm:flex flex-col items-end min-w-0 max-w-[120px]">
               {role != null && (
-                <span className="text-[10px] font-semibold text-yapo-white/95 truncate w-full text-right" title={getRoleLabel(role)}>
+                <span className="text-[10px] font-semibold text-yapo-petroleo truncate w-full text-right" title={getRoleLabel(role)}>
                   {getRoleLabel(role)}
                 </span>
               )}
               {planName && (
-                <span className="text-[10px] text-yapo-white/80 truncate w-full text-right" title={planName}>
+                <span className="text-[10px] text-gris-texto truncate w-full text-right" title={planName}>
                   {planName}
                 </span>
               )}
               {(verified || badges.length > 0) && (
                 <span className="flex items-center gap-0.5 mt-0.5 flex-wrap justify-end">
                   {verified && (
-                    <span className="inline-flex items-center rounded bg-yapo-emerald/90 px-1 py-0.5 text-[9px] font-medium text-white" title="Perfil verificado">
+                    <span className="inline-flex items-center rounded bg-yapo-validacion/20 px-1 py-0.5 text-[9px] font-medium text-yapo-validacion-dark" title="Perfil verificado">
                       ✓
                     </span>
                   )}
                   {badges.slice(0, 2).map((b) => (
-                    <span key={b} className="rounded bg-white/25 px-1 py-0.5 text-[9px] text-yapo-white truncate max-w-[52px]" title={b}>
+                    <span key={b} className="rounded bg-yapo-cta/15 px-1 py-0.5 text-[9px] text-yapo-cta truncate max-w-[52px]" title={b}>
                       {b}
                     </span>
                   ))}
                 </span>
               )}
             </div>
-            {/* En móvil muy estrecho: solo avatar + un indicador de verificado/badges */}
             <div className="flex sm:hidden items-center gap-0.5">
-              {verified && <span className="text-yapo-emerald text-xs" title="Verificado">✓</span>}
+              {verified && <span className="text-yapo-validacion text-xs" title="Verificado">✓</span>}
               {badges.length > 0 && badges.length <= 2 && !verified && (
-                <span className="text-yapo-white/90 text-[10px] truncate max-w-[40px]" title={badges.join(", ")}>{badges[0]}</span>
+                <span className="text-yapo-petroleo text-[10px] truncate max-w-[40px]" title={badges.join(", ")}>{badges[0]}</span>
               )}
             </div>
           </Link>
@@ -169,15 +171,15 @@ export default function Navbar({ userImage, userName, showBack, title: _title = 
         role="navigation"
         aria-label="Menú principal"
       >
-        <div className="flex h-20 items-center justify-between border-b border-yapo-blue/10 px-4 pt-[env(safe-area-inset-top)]">
+        <div className="flex h-20 items-center justify-between border-b border-gris-ui-border bg-gradient-to-r from-yapo-petroleo to-yapo-petroleo-light px-4 pt-[env(safe-area-inset-top)]">
           <div className="flex items-center gap-3">
-            <Image src="/images/icon.png" alt="" width={64} height={64} className="h-16 w-16 object-contain" />
-            <span className="text-xl font-bold text-yapo-blue">Menú</span>
+            <Image src="/images/icon.png" alt="" width={64} height={64} className="h-16 w-16 object-contain drop-shadow-md" />
+            <span className="text-xl font-bold text-yapo-white">Menú</span>
           </div>
           <button
             type="button"
             onClick={() => setMenuOpen(false)}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-yapo-blue active:bg-yapo-blue/10"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-yapo-white active:bg-white/20"
             aria-label="Cerrar menú"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
@@ -186,19 +188,28 @@ export default function Navbar({ userImage, userName, showBack, title: _title = 
           </button>
         </div>
         <nav className="flex flex-col gap-1 p-4">
-          {NAV_LINKS.map(({ href, label, Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              onClick={() => setMenuOpen(false)}
-              className={`flex items-center gap-3 rounded-xl px-4 py-3 font-medium ${
-                pathname === href ? "bg-yapo-blue text-yapo-white" : "text-yapo-blue active:bg-yapo-blue/10"
-              }`}
-            >
-              <Icon className="h-5 w-5 shrink-0" />
-              {label}
-            </Link>
-          ))}
+          {NAV_LINKS.map(({ id, href, label, Icon }) => {
+            const isInicio = id === "inicio";
+            return (
+              <Link
+                key={id}
+                href={href}
+                onClick={() => setMenuOpen(false)}
+                className={
+                  isInicio
+                    ? "flex items-center gap-3 py-2 font-medium text-yapo-petroleo hover:text-yapo-cta"
+                    : `nav-card-interactive flex items-center gap-3 rounded-xl px-4 py-3 font-medium ${
+                        pathname === href
+                          ? "bg-yapo-cta text-yapo-white shadow-md ring-2 ring-yapo-cta/50"
+                          : "text-yapo-petroleo hover:bg-yapo-cta/15 hover:text-yapo-cta hover:shadow-sm"
+                      }`
+                }
+              >
+                <Icon className="h-5 w-5 shrink-0" />
+                {label}
+              </Link>
+            );
+          })}
         </nav>
       </aside>
     </>

@@ -12,7 +12,7 @@ export const YAPO_PERFILES_MOCK: YapoPerfil[] = [
     tipificacion: "Kavaju",
     especialidad: "Plomería y Destranque",
     nombre: "Carlos R.",
-    avatar_url: null,
+    avatar_url: "/images/plomero-carlo.png",
     ubicacion: {
       departamento: "Central",
       ciudad: "Fernando de la Mora",
@@ -43,7 +43,7 @@ export const YAPO_PERFILES_MOCK: YapoPerfil[] = [
     tipificacion: "Mbareté",
     especialidad: "Electricidad industrial y domiciliaria",
     nombre: "María González",
-    avatar_url: null,
+    avatar_url: "/images/electricista-maria.png",
     ubicacion: {
       departamento: "Central",
       ciudad: "Asunción",
@@ -67,7 +67,7 @@ export const YAPO_PERFILES_MOCK: YapoPerfil[] = [
     tipificacion: "Profesional",
     especialidad: "Enfermería domiciliaria",
     nombre: "Ana Martínez",
-    avatar_url: null,
+    avatar_url: "/images/enfermera-ana.png",
     ubicacion: {
       departamento: "Central",
       ciudad: "Lambaré",
@@ -91,7 +91,7 @@ export const YAPO_PERFILES_MOCK: YapoPerfil[] = [
     tipificacion: "Kavaju",
     especialidad: "Limpieza y orden",
     nombre: "Rosa B.",
-    avatar_url: null,
+    avatar_url: "/images/limpieza-rosa.png",
     ubicacion: {
       departamento: "Central",
       ciudad: "Asunción",

@@ -85,7 +85,7 @@ export default function ChatInputWhatsApp({
         type="submit"
         disabled={disabled || !text.trim()}
         aria-label="Enviar"
-        className="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full bg-[#075e54] text-white transition-[transform,opacity] active:scale-95 disabled:opacity-50"
+        className="btn-interactive flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full bg-[#075e54] text-white shadow-md border-2 border-[#064e47] hover:brightness-110 disabled:opacity-50"
       >
         <SendIcon className="h-5 w-5" />
       </button>

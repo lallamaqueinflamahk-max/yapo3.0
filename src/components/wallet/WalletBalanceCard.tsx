@@ -65,7 +65,7 @@ export default function WalletBalanceCard({
 
   return (
     <section
-      className="rounded-3xl border-2 border-yapo-blue/25 bg-gradient-to-b from-yapo-blue/10 to-yapo-white p-6 shadow-md transition-shadow hover:shadow-lg"
+      className="nav-card-interactive rounded-3xl border-2 border-yapo-blue/25 bg-gradient-to-b from-yapo-blue/10 to-yapo-white p-6 shadow-md hover:border-yapo-cta/30"
       aria-label="Saldo de billetera"
     >
       {isLocked && (

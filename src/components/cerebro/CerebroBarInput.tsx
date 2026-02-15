@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useCallback, useState } from "react";
 import { createSpeechToText } from "@/lib/ai";
+import IconBuscar from "@/components/icons/IconBuscar";
 
 const DEFAULT_PLACEHOLDER = "¿Qué necesitás hoy?";
 
@@ -90,51 +91,38 @@ export default function CerebroBarInput({
         aria-label={ariaLabel}
         className="min-h-[48px] min-w-0 flex-1 rounded-2xl border-2 border-yapo-blue/30 bg-yapo-white px-4 text-base text-foreground outline-none placeholder:text-yapo-blue/50 focus:border-yapo-blue focus:ring-2 focus:ring-yapo-blue/25 disabled:opacity-60"
       />
-      <button
-        type="button"
-        onClick={toggleMic}
-        disabled={disabled}
-        aria-label={isListening ? "Dejar de escuchar" : "Usar voz"}
-        aria-pressed={isListening}
-        className={`
-          flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border-2 transition-all duration-200 active:scale-95 disabled:opacity-50
-          ${isListening
-            ? "animate-pulse border-yapo-red bg-yapo-red text-yapo-white"
-            : "border-yapo-blue/40 bg-yapo-blue/10 text-yapo-blue"
-          }
-        `}
-      >
-        <MicIcon className="h-5 w-5" />
-      </button>
-      <button
-        type="submit"
-        disabled={!canSubmit}
-        aria-label="Enviar"
-        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-yapo-red text-yapo-white transition-all duration-200 active:scale-95 disabled:opacity-50"
-      >
-        <SendIcon className="h-5 w-5" />
-      </button>
+      <div className="flex shrink-0 items-center gap-1">
+        <button
+          type="submit"
+          disabled={!canSubmit}
+          aria-label="Buscar"
+          className="btn-interactive inline-flex shrink-0 items-center justify-center border-0 bg-transparent p-0 outline-none ring-0 transition-transform hover:scale-110 active:scale-95 focus:outline-none focus:ring-0 disabled:opacity-50 disabled:hover:scale-100"
+        >
+          <IconBuscar className="h-14 w-14 shrink-0 sm:h-16 sm:w-16" />
+        </button>
+        <button
+          type="button"
+          onClick={toggleMic}
+          disabled={disabled}
+          aria-label={isListening ? "Dejar de escuchar" : "Usar voz"}
+          aria-pressed={isListening}
+          className={`btn-interactive inline-flex shrink-0 items-center justify-center border-0 bg-transparent p-0 text-yapo-blue outline-none ring-0 transition-transform hover:scale-110 active:scale-95 focus:outline-none focus:ring-0 disabled:opacity-50 disabled:hover:scale-100 ${isListening ? "animate-pulse" : ""}`}
+        >
+          <MicIcon className={`h-16 w-16 shrink-0 sm:h-[4.5rem] sm:w-[4.5rem] ${isListening ? "opacity-90 ring-2 ring-yapo-cta/50 rounded-full" : ""}`} />
+        </button>
+      </div>
     </form>
   );
 }
 
+const MIC_ICON = "/images/icon-mic.png";
+
 function MicIcon({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden
-    >
-      <path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z" />
-      <path d="M19 10v2a7 7 0 01-14 0v-2" />
-      <path d="M12 19v3" />
-      <path d="M9 22h6" />
-    </svg>
+    <span className={`inline-block shrink-0 ${className ?? "h-6 w-6"}`} aria-hidden>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={MIC_ICON} alt="" className="h-full w-full object-contain" />
+    </span>
   );
 }
 

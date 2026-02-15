@@ -9,11 +9,11 @@ const variantClasses: Record<
   string
 > = {
   red:
-    "bg-yapo-red text-yapo-white border-yapo-red active:bg-yapo-red-dark",
+    "bg-yapo-cta text-yapo-white border-2 border-yapo-cta shadow-md hover:bg-yapo-cta-hover hover:shadow-lg hover:border-yapo-cta-hover",
   blue:
-    "bg-yapo-blue text-yapo-white border-yapo-blue active:bg-yapo-blue-dark",
+    "bg-yapo-blue text-yapo-white border-2 border-yapo-blue shadow-md hover:bg-yapo-blue-dark hover:shadow-lg hover:border-yapo-blue-dark",
   white:
-    "bg-yapo-white text-yapo-blue border-yapo-blue active:bg-yapo-blue/10",
+    "bg-yapo-white text-yapo-blue border-2 border-yapo-blue shadow-sm hover:bg-yapo-blue-light/50 hover:shadow-md hover:border-yapo-blue-dark",
 };
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -38,9 +38,8 @@ export default function Button({
       type="button"
       onClick={handleClick}
       className={`
-        inline-flex min-h-[48px] min-w-[48px] items-center justify-center rounded-xl border-2 px-6 py-3 text-base font-semibold
-        transition-[transform,background] active:scale-[0.98]
-        disabled:opacity-50 disabled:active:scale-100
+        btn-interactive inline-flex min-h-[48px] min-w-[48px] items-center justify-center rounded-xl px-6 py-3 text-base font-semibold
+        disabled:opacity-50 disabled:pointer-events-none
         ${variantClasses[variant]} ${className}
       `.trim()}
       {...props}

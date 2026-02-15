@@ -79,7 +79,7 @@ export default function MapSemaforo({ zones, className = "" }: MapSemaforoProps)
 
       <Link
         href="/mapa"
-        className="mt-3 inline-block text-xs font-medium text-yapo-blue underline underline-offset-2 hover:no-underline"
+        className="btn-interactive mt-3 inline-block rounded-xl border-2 border-yapo-blue/40 bg-yapo-blue/10 px-3 py-2 text-xs font-semibold text-yapo-blue shadow-sm hover:bg-yapo-blue/20"
       >
         Ver mapa
       </Link>

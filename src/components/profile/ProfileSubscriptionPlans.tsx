@@ -22,7 +22,7 @@ export default function ProfileSubscriptionPlans({ plans, currentRole }: Profile
 
   return (
     <section className="rounded-2xl border border-yapo-blue/15 bg-yapo-white p-4" aria-label="Planes de suscripción">
-      <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-yapo-blue/80">
+      <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-yapo-petroleo">
         Planes y niveles de acceso
       </h2>
       <p className="mb-2 text-sm text-foreground/80">
@@ -69,12 +69,12 @@ export default function ProfileSubscriptionPlans({ plans, currentRole }: Profile
               <button
                 type="button"
                 onClick={() => setPlanForRequisitos(plan)}
-                className={`mt-4 w-full rounded-lg py-2 text-sm font-medium ${
+                className={`btn-interactive mt-4 w-full rounded-xl py-2 text-sm font-semibold shadow-sm ${
                   plan.highlighted
-                    ? "bg-yapo-red text-yapo-white"
+                    ? "bg-yapo-cta text-yapo-white border-2 border-yapo-cta-hover/50 hover:bg-yapo-cta-hover"
                     : isCurrentRole
-                      ? "border-2 border-yapo-emerald text-yapo-emerald"
-                      : "border-2 border-yapo-blue/30 text-yapo-blue"
+                      ? "border-2 border-yapo-emerald bg-yapo-emerald/10 text-yapo-emerald hover:bg-yapo-emerald/20"
+                      : "border-2 border-yapo-blue/40 bg-yapo-blue/10 text-yapo-blue hover:bg-yapo-blue/20"
                 }`}
               >
                 {isCurrentRole ? "Tu nivel" : plan.price === "0" ? "Ver requisitos" : "Ver requisitos y precio"}
@@ -103,7 +103,7 @@ export default function ProfileSubscriptionPlans({ plans, currentRole }: Profile
             <p className="mt-1 text-lg font-semibold text-yapo-blue/90">
               {formatPrice(planForRequisitos)}
             </p>
-            <h4 className="mt-4 text-sm font-semibold uppercase tracking-wider text-yapo-blue/80">
+            <h4 className="mt-4 text-sm font-semibold uppercase tracking-wider text-yapo-petroleo">
               Requisitos para este plan
             </h4>
             <ul className="mt-2 space-y-2 text-sm text-foreground/90">
@@ -117,7 +117,7 @@ export default function ProfileSubscriptionPlans({ plans, currentRole }: Profile
             <button
               type="button"
               onClick={() => setPlanForRequisitos(null)}
-              className="mt-6 w-full rounded-xl bg-yapo-blue py-3 font-medium text-yapo-white"
+              className="btn-interactive mt-6 w-full rounded-xl bg-yapo-petroleo py-3 font-semibold text-yapo-white shadow-md border-2 border-yapo-petroleo/80 hover:brightness-110"
             >
               Cerrar
             </button>

@@ -11,7 +11,7 @@ export default function ProfileSponsors({ sponsors }: ProfileSponsorsProps) {
 
   return (
     <section className="rounded-2xl border border-yapo-blue/15 bg-yapo-white p-4" aria-label="Sponsors">
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-yapo-blue/80">
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-yapo-petroleo">
         Sponsors y aliados
       </h2>
       <ul className="grid gap-3 sm:grid-cols-2">

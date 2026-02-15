@@ -7,56 +7,60 @@ import { runBarQuery } from "@/lib/cerebro";
 import type { BarResult } from "@/lib/cerebro";
 import type { RoleId } from "@/lib/cerebro";
 import { createTextToSpeech } from "@/lib/ai";
-import type { DashboardConfig } from "@/lib/adaptive-ui";
 import CerebroBarInput from "@/components/cerebro/CerebroBarInput";
 import CerebroBarResult from "@/components/cerebro/CerebroBarResult";
+import type { DashboardConfig } from "@/lib/adaptive-ui";
 
-interface BarraBusquedaYapoProps {
-  /** Placeholder desde config (ej. "Buscar con YAPÓ", "Buscar trabajadores con YAPÓ") */
+function resolvePlaceholder(
+  template: string,
+  name?: string | null
+): string {
+  const n = name?.trim() ?? "";
+  return template.replace(/\{name\}/g, n).replace(/\s{2,}/g, " ").trim()
+    || "Preguntá lo que quieras: trabajo, billetera, escudos…";
+}
+
+/** Convierte respuesta de /api/ai a BarResult para la UI. */
+function apiResponseToBarResult(data: {
+  text?: string;
+  textForTTS?: string;
+  suggestedActions?: Array<{ id: string; label?: string; href?: string }>;
+  navigation?: { href?: string; label?: string };
+  actionAllowed?: boolean;
+}): BarResult {
+  return {
+    response: data.text?.trim() || data.textForTTS?.trim() || "Listo.",
+    authorized: data.actionAllowed ?? true,
+    suggestedActions: (data.suggestedActions ?? []).map((a) => ({
+      id: a.id,
+      label: a.label ?? a.id,
+      href: a.href ?? "#",
+    })),
+    navigation: data.navigation?.href
+      ? { href: data.navigation.href, label: data.navigation.label ?? "Ir" }
+      : undefined,
+    events: ["cerebro-bar:api"],
+  };
+}
+
+export interface BarraBusquedaYapoProps {
   config?: DashboardConfig | null;
-  placeholder?: string;
+  /** Estilo compacto para hero (una sola línea visual). */
+  variant?: "default" | "hero";
+  className?: string;
 }
 
 /**
- * Barra de búsqueda YAPÓ: Cerebro interactivo real (no mock).
- * Mismo motor: input + mic (Web Speech) + runBarQuery + TTS. Placeholder por rol.
+ * Barra de búsqueda con IA: texto + micrófono (voz), enlazada a OpenAI (/api/ai) y ElevenLabs (/api/voice).
+ * Podés preguntar lo que sea; si OpenAI está activo se usa, si no, motor local. Voz: ElevenLabs o síntesis local.
  */
-/** Sustituye {name} y {city} en el placeholder Smart-Bar. */
-function resolveSmartBarPlaceholder(
-  template: string,
-  name?: string | null,
-  city?: string | null
-): string {
-  let out = template;
-  if (name?.trim()) out = out.replace(/\{name\}/g, name.trim());
-  else out = out.replace(/\{name\}/g, "").replace(/Hola\s*,?\s*/i, "Hola, ");
-  if (city?.trim()) out = out.replace(/\{city\}/g, city.trim());
-  else out = out.replace(/\{city\}/g, "tu zona");
-  return out.replace(/\s{2,}/g, " ").trim() || "¿Qué necesitás hoy? Preguntale a YAPÓ AI.";
-}
-
-export default function BarraBusquedaYapo({ config, placeholder }: BarraBusquedaYapoProps) {
+export default function BarraBusquedaYapo({ config, variant = "default", className = "" }: BarraBusquedaYapoProps) {
   const pathname = usePathname();
   const { identity } = useSession();
-  const rawPlaceholder =
-    config?.smart_bar_placeholder ?? config?.search_placeholder ?? placeholder ?? "Buscar con YAPÓ";
-  const text = useMemo(
-    () =>
-      resolveSmartBarPlaceholder(
-        rawPlaceholder,
-        (identity as { name?: string; displayName?: string })?.name ??
-          (identity as { displayName?: string })?.displayName,
-        (identity as { city?: string; location?: string })?.city ??
-          (identity as { location?: string })?.location
-      ),
-    [rawPlaceholder, identity]
-  );
-  const quickSuggestions = config?.quick_suggestions ?? [];
-
   const [value, setValue] = useState("");
   const [status, setStatus] = useState<"idle" | "thinking" | "responding">("idle");
   const [lastResult, setLastResult] = useState<BarResult | null>(null);
-  const [lastQuery, setLastQuery] = useState<string>("");
+  const [lastQuery, setLastQuery] = useState("");
   const ttsRef = useRef<ReturnType<typeof createTextToSpeech> | null>(null);
 
   const screenContext = useMemo(
@@ -67,6 +71,31 @@ export default function BarraBusquedaYapo({ config, placeholder }: BarraBusqueda
       amount: undefined as number | undefined,
     }),
     [pathname, identity?.userId, identity?.roles]
+  );
+
+  const apiContext = useMemo(
+    () => {
+      const uid = (identity as { userId?: string } | null)?.userId ?? "safe-user";
+      const roles = (identity?.roles ?? ["vale"]) as string[];
+      return {
+        user: uid ? { userId: uid, roles, verified: false } : null,
+        roles,
+        permissions: [] as string[],
+        screen: pathname ?? "/home",
+        memory: [] as Array<{ query?: string; message?: string; at?: number }>,
+      };
+    },
+    [pathname, identity]
+  );
+
+  const placeholder = useMemo(
+    () =>
+      resolvePlaceholder(
+        config?.smart_bar_placeholder ?? "Preguntá lo que quieras: trabajo, billetera, escudos…",
+        (identity as { name?: string; displayName?: string })?.name ??
+          (identity as { displayName?: string })?.displayName
+      ),
+    [config?.smart_bar_placeholder, identity]
   );
 
   useEffect(() => {
@@ -82,16 +111,65 @@ export default function BarraBusquedaYapo({ config, placeholder }: BarraBusqueda
     };
   }, []);
 
+  const speak = useCallback((text: string) => {
+    if (!text?.trim()) return;
+    const tts = ttsRef.current;
+    try {
+      tts?.speak(text);
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const speakWithElevenLabs = useCallback(async (text: string) => {
+    if (!text?.trim()) return;
+    try {
+      const res = await fetch("/api/voice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: text.trim() }),
+      });
+      if (res.ok && res.headers.get("content-type")?.includes("audio")) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        await audio.play();
+        audio.onended = () => URL.revokeObjectURL(url);
+        return;
+      }
+    } catch {
+      // fallback to local TTS
+    }
+    speak(text);
+  }, [speak]);
+
   const runQuery = useCallback(
-    (query: string) => {
-      const q = query.trim();
-      if (!q) return;
-      setLastQuery(q);
+    async (query: string) => {
+      if (!query.trim()) return;
       setStatus("thinking");
       let result: BarResult;
       try {
-        result = runBarQuery(q, screenContext);
+        const res = await fetch("/api/ai", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: query.trim(), context: apiContext }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && (data.text != null || data.textForTTS != null)) {
+          result = apiResponseToBarResult(data);
+          setLastResult(result);
+          setLastQuery(query.trim());
+          setStatus("responding");
+          const textToSpeak = data.textForTTS || data.text || result.response;
+          if (textToSpeak?.trim()) await speakWithElevenLabs(textToSpeak);
+          return;
+        }
       } catch {
+        // fallback to local engine
+      }
+      try {
+        result = runBarQuery(query.trim(), screenContext);
+      } catch (err) {
         result = {
           response: "No pude procesar eso. Probá de nuevo.",
           authorized: false,
@@ -100,71 +178,56 @@ export default function BarraBusquedaYapo({ config, placeholder }: BarraBusqueda
         };
       }
       setLastResult(result);
+      setLastQuery(query.trim());
       setStatus("responding");
       if (result.response?.trim()) {
-        try {
-          ttsRef.current?.speak(result.response);
-        } catch {
-          // ignore TTS errors
-        }
+        await speakWithElevenLabs(result.response);
       }
     },
-    [screenContext]
+    [screenContext, apiContext, speakWithElevenLabs]
   );
 
   const handleSubmit = useCallback(() => {
-    const query = value.trim();
-    if (!query) return;
+    const q = value.trim();
+    if (!q) return;
     setValue("");
-    runQuery(query);
+    runQuery(q);
   }, [value, runQuery]);
 
-  const onSuggestionClick = useCallback(
-    (suggestion: string) => {
-      runQuery(suggestion);
-    },
-    [runQuery]
-  );
+  const inputClassName = variant === "hero"
+    ? "min-h-[52px] rounded-[14px] border-2 border-gris-ui-border bg-gris-ui focus-within:border-yapo-blue focus-within:ring-2 focus-within:ring-yapo-blue/20"
+    : "rounded-2xl border-2 border-yapo-blue/25 bg-yapo-white shadow-md focus-within:border-yapo-blue focus-within:ring-2 focus-within:ring-yapo-blue/20";
 
   return (
-    <div className="w-full space-y-3" role="search" aria-label="Buscador YAPÓ">
-      <div className="rounded-xl border border-yapo-blue/20 bg-white/70 bg-gradient-to-r from-yapo-blue-light/20 to-transparent px-3 py-2 shadow-sm backdrop-blur-sm">
-        <CerebroBarInput
-          value={value}
-          onChange={setValue}
-          onSubmit={handleSubmit}
-          disabled={status === "thinking"}
-          placeholder={text}
-          aria-label="YAPÓ AI Smart-Bar"
-        />
-      </div>
-      {quickSuggestions.length > 0 && (
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Sugerencias rápidas">
-          {quickSuggestions.map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => onSuggestionClick(s)}
-              className="min-h-[44px] min-w-[44px] rounded-full border border-yapo-blue/30 bg-yapo-blue-light/30 px-4 py-2 text-sm font-medium text-yapo-blue transition-[transform,opacity] duration-75 hover:bg-yapo-blue-light/50 hover:opacity-90 active:scale-[0.98] active:opacity-100"
-            >
-              {s}
-            </button>
-          ))}
-        </div>
-      )}
+    <div className={`w-full space-y-2 ${className}`}>
+      <CerebroBarInput
+        value={value}
+        onChange={setValue}
+        onSubmit={handleSubmit}
+        disabled={status === "thinking"}
+        placeholder={placeholder}
+        aria-label="Preguntar al Buscador YAPÓ con voz o texto"
+        className={inputClassName}
+      />
       {status === "thinking" && (
-        <div className="flex items-center justify-center gap-2 py-2 text-sm text-yapo-blue/80" role="status">
+        <div
+          className="flex items-center justify-center gap-2 py-2 text-sm text-yapo-blue"
+          role="status"
+          aria-live="polite"
+        >
           <span className="h-2 w-2 animate-bounce rounded-full bg-yapo-blue [animation-delay:0ms]" />
           <span className="h-2 w-2 animate-bounce rounded-full bg-yapo-blue [animation-delay:150ms]" />
           <span className="h-2 w-2 animate-bounce rounded-full bg-yapo-blue [animation-delay:300ms]" />
         </div>
       )}
-      {lastResult && (
-        <div className="rounded-xl border-2 border-yapo-blue/20 bg-yapo-blue-light/20 p-3">
+      {lastResult && status === "responding" && (
+        <div className="rounded-2xl border-2 border-yapo-blue/20 bg-yapo-white p-3 shadow-sm">
           <CerebroBarResult
             result={lastResult}
-            query={lastQuery}
-            onSpeak={() => lastResult.response?.trim() && ttsRef.current?.speak(lastResult.response)}
+            query={lastQuery || undefined}
+            onSpeak={() => {
+              if (lastResult.response?.trim()) speakWithElevenLabs(lastResult.response);
+            }}
           />
         </div>
       )}

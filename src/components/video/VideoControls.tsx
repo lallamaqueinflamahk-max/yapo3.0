@@ -36,8 +36,8 @@ export default function VideoControls({
         disabled={disabled}
         aria-label={isMuted ? "Activar micrófono" : "Silenciar"}
         aria-pressed={isMuted}
-        className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full transition-[transform,opacity] active:scale-95 disabled:opacity-50 sm:h-12 sm:w-12 ${
-          isMuted ? "bg-yapo-red/80 text-white" : "bg-white/20 text-white hover:bg-white/30"
+        className={`btn-interactive flex h-14 w-14 shrink-0 items-center justify-center rounded-full shadow-md disabled:opacity-50 sm:h-12 sm:w-12 ${
+          isMuted ? "bg-yapo-cta text-white border-2 border-yapo-cta-hover/50" : "bg-white/20 text-white border-2 border-white/30 hover:bg-white/30"
         }`}
       >
         <MicIcon className="h-6 w-6 sm:h-5 sm:w-5" muted={isMuted} />
@@ -49,7 +49,7 @@ export default function VideoControls({
         onClick={onLeave}
         disabled={disabled}
         aria-label="Colgar"
-        className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-yapo-red text-white transition-[transform,opacity] active:scale-95 hover:bg-yapo-red/90 disabled:opacity-50 sm:h-14 sm:w-14"
+        className="btn-interactive flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-yapo-cta text-white shadow-lg border-2 border-yapo-cta-hover/50 hover:bg-yapo-cta-hover disabled:opacity-50 sm:h-14 sm:w-14"
       >
         <HangUpIcon className="h-7 w-7 sm:h-6 sm:w-6" />
       </button>
@@ -61,8 +61,8 @@ export default function VideoControls({
         disabled={disabled}
         aria-label={isVideoOff ? "Encender cámara" : "Apagar cámara"}
         aria-pressed={isVideoOff}
-        className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full transition-[transform,opacity] active:scale-95 disabled:opacity-50 sm:h-12 sm:w-12 ${
-          isVideoOff ? "bg-yapo-red/80 text-white" : "bg-white/20 text-white hover:bg-white/30"
+        className={`btn-interactive flex h-14 w-14 shrink-0 items-center justify-center rounded-full shadow-md disabled:opacity-50 sm:h-12 sm:w-12 ${
+          isVideoOff ? "bg-yapo-cta text-white border-2 border-yapo-cta-hover/50" : "bg-white/20 text-white border-2 border-white/30 hover:bg-white/30"
         }`}
       >
         <CameraIcon className="h-6 w-6 sm:h-5 sm:w-5" off={isVideoOff} />

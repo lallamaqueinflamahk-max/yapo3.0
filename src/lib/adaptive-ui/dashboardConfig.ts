@@ -1,6 +1,6 @@
 /**
  * Configuración del dashboard adaptativo por rol y tier.
- * Trabajador (Gratis/Básico): Chamba, Calificación, Escudos, Beneficios.
+ * Trabajador (Gratis/Básico): Trabajo, Calificación, Escudos, Beneficios.
  * Mbareté: Ruedas, Territorio, Ganancias, Reclutamiento.
  * PYME/Enterprise: Vacante, Talentos, Pagos, Analytics.
  */
@@ -25,7 +25,7 @@ function q(
 
 /** Trabajador (Valé, Capeto, Kavaju): foco oportunidades y escudos. */
 const TRABAJADOR_QUADRANTS: [QuadrantItem, QuadrantItem, QuadrantItem, QuadrantItem] = [
-  q("Buscar_Chamba", "Buscar Chamba", "/mapa", "🔍", "Empleos y ofertas cerca"),
+  q("Buscar_Trabajo", "Buscar trabajo", "/mapa", "🔍", "Empleos y ofertas cerca"),
   q("Mi_Calificacion", "Mi Calificación", "/profile", "⭐", "Rating y cumplidor %"),
   q("Mis_Escudos", "Mis Escudos", "/escudos", "🛡️", "Insurtech, Fintech, Regalos, Comunidad"),
   q("Beneficios_Sponsors", "Beneficios / Sponsors", "/comunidad", "🎁", "Promos y referidos"),
@@ -49,7 +49,7 @@ const PYME_QUADRANTS: [QuadrantItem, QuadrantItem, QuadrantItem, QuadrantItem] =
 
 /** Cliente (contratante individual): similar a trabajador pero con foco en buscar y contratar. */
 const CLIENTE_QUADRANTS: [QuadrantItem, QuadrantItem, QuadrantItem, QuadrantItem] = [
-  q("Buscar_Chamba", "Buscar Trabajadores", "/mapa", "🔍", "Encontrar talento"),
+  q("Buscar_Trabajo", "Buscar Trabajadores", "/mapa", "🔍", "Encontrar talento"),
   q("Mi_Calificacion", "Mi Perfil", "/profile", "⭐", "Tu perfil de contratante"),
   q("Mis_Escudos", "Seguro Colectivo", "/escudos", "🛡️", "Protección y escudos"),
   q("Beneficios_Sponsors", "Beneficios", "/comunidad", "🎁", "Promos"),
@@ -80,12 +80,12 @@ function getMainActionsForRole(role: RoleId): MainActionId[] {
     case "enterprise":
       return ["Publicar_Vacante", "Filtro_Talentos", "Gestion_Pagos", "Analytics_Marca"];
     case "cliente":
-      return ["Buscar_Chamba", "Mi_Calificacion", "Mis_Escudos", "Beneficios_Sponsors"];
+      return ["Buscar_Trabajo", "Mi_Calificacion", "Mis_Escudos", "Beneficios_Sponsors"];
     case "vale":
     case "capeto":
     case "kavaju":
     default:
-      return ["Buscar_Chamba", "Mi_Calificacion", "Mis_Escudos", "Beneficios_Sponsors"];
+      return ["Buscar_Trabajo", "Mi_Calificacion", "Mis_Escudos", "Beneficios_Sponsors"];
   }
 }
 
@@ -101,7 +101,7 @@ function getSmartBarPlaceholder(role: RoleId): string {
     case "capeto":
     case "kavaju":
     case "mbarete":
-      return "Hola {name}, ¿qué chamba buscamos hoy?";
+      return "Hola {name}, ¿qué trabajo buscamos hoy?";
     case "cliente":
       return "¿Necesitás un profesional hoy? Preguntale a YAPÓ AI.";
     case "pyme":

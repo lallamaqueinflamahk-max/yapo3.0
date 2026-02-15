@@ -1,12 +1,17 @@
 /**
  * GET /api/profile/public/[userId]
  * Perfil público de un usuario (para ver desde el mapa: profesionales y empresas).
- * No expone email ni datos sensibles. Si userId es de mock (prof-*, emp-*), devuelve datos de demostración.
+ * Incluye perfil completo (identidad, conectividad, laboral, estudios, preclasificación) para profesionales.
  */
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { getPerfilCompletoByUserId } from "@/data/perfil-completo-mock";
 
 const MOCK_PUBLIC: Record<string, { name: string; role: string; workType: string; territory: string; isEmpresa: boolean; buscan?: string[] }> = {
+  "PY-102938": { name: "Carlos R.", role: "vale", workType: "Plomería", territory: "Pitiantuta, Fernando de la Mora", isEmpresa: false },
+  "PY-204851": { name: "María González", role: "mbarete", workType: "Electricidad", territory: "Sajonia, Asunción", isEmpresa: false },
+  "PY-301662": { name: "Ana Martínez", role: "vale", workType: "Enfermería domiciliaria", territory: "Santa Ana, Lambaré", isEmpresa: false },
+  "PY-405123": { name: "Rosa B.", role: "vale", workType: "Limpieza", territory: "Sajonia, Asunción", isEmpresa: false },
   "prof-1": { name: "Juan P.", role: "vale", workType: "Electricista", territory: "Botánico, Asunción", isEmpresa: false },
   "prof-2": { name: "María G.", role: "capeto", workType: "Limpieza", territory: "Botánico, Asunción", isEmpresa: false },
   "prof-3": { name: "Carlos R.", role: "vale", workType: "Plomería", territory: "Botánico, Asunción", isEmpresa: false },
@@ -38,6 +43,10 @@ const MOCK_PROFESIONAL_EXTRA: Record<string, { rating: number; verified: boolean
   "prof-8": { rating: 4.5, verified: true, documentVerified: true, badges: ["Rápido", "Puntual"], videoCount: 2, workHistory: "3 años", videos: [{ id: "v20", title: "Zona de cobertura" }, { id: "v21", title: "Presentación" }] },
   "prof-9": { rating: 4.8, verified: true, documentVerified: true, badges: ["Top rated", "Experiencia"], videoCount: 6, workHistory: "7 años", videos: [{ id: "v22", title: "Ventas" }, { id: "v23", title: "Atención al cliente" }, { id: "v24", title: "Presentación" }, { id: "v25", title: "Logros" }, { id: "v26", title: "Testimonio" }, { id: "v27", title: "Servicios" }] },
   "prof-10": { rating: 4.6, verified: true, documentVerified: true, badges: ["Certificado", "Puntual"], videoCount: 3, workHistory: "10 años", videos: [{ id: "v28", title: "Servicios contables" }, { id: "v29", title: "Asesoría" }, { id: "v30", title: "Presentación" }] },
+  "PY-102938": { rating: 4.8, verified: true, documentVerified: false, badges: ["Puntual", "Insurtech"], videoCount: 3, workHistory: "5 años en el rubro", videos: [{ id: "py1", title: "Destranque cañería" }, { id: "py2", title: "Cambio llave" }, { id: "py3", title: "Instalación baño" }] },
+  "PY-204851": { rating: 4.9, verified: true, documentVerified: true, badges: ["Top rated", "Certificado SNPP"], videoCount: 4, workHistory: "8 años", videos: [{ id: "py4", title: "Instalaciones industriales" }, { id: "py5", title: "Tableros" }] },
+  "PY-301662": { rating: 5, verified: true, documentVerified: true, badges: ["Enfermería", "Cuidados"], videoCount: 5, workHistory: "6 años", videos: [{ id: "py6", title: "Atención domiciliaria" }] },
+  "PY-405123": { rating: 4.6, verified: false, documentVerified: false, badges: ["Insurtech"], videoCount: 2, workHistory: "3 años", videos: [] },
 };
 
 export async function GET(
@@ -50,6 +59,7 @@ export async function GET(
   const mock = MOCK_PUBLIC[userId];
   if (mock) {
     const extra = userId.startsWith("prof-") ? MOCK_PROFESIONAL_EXTRA[userId] : null;
+    const perfilCompleto = !mock.isEmpresa ? getPerfilCompletoByUserId(userId) : null;
     return NextResponse.json({
       userId,
       name: mock.name,
@@ -74,6 +84,7 @@ export async function GET(
       videoCount: extra?.videoCount ?? 0,
       workHistory: extra?.workHistory ?? undefined,
       videos: extra?.videos ?? undefined,
+      perfilCompleto: perfilCompleto ?? undefined,
     });
   }
 

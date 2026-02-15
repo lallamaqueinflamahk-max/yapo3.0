@@ -126,7 +126,7 @@ export default function TransferForm({
         <button
           type="submit"
           disabled={loading}
-          className="flex min-h-[48px] w-full items-center justify-center rounded-xl bg-yapo-red px-4 py-3 font-semibold text-yapo-white transition-[transform] active:scale-[0.98] disabled:opacity-70"
+          className="btn-interactive flex min-h-[48px] w-full items-center justify-center rounded-xl bg-yapo-cta px-4 py-3 font-semibold text-yapo-white shadow-md border-2 border-yapo-cta-hover/50 hover:bg-yapo-cta-hover disabled:opacity-70"
         >
           {loading ? "Enviando…" : "Enviar"}
         </button>

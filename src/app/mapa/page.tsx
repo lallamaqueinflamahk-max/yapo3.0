@@ -1,10 +1,21 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import Avatar from "@/components/ui/Avatar";
-import SearchPillar, { type QuickFilterType } from "@/components/dashboard/SearchPillar";
+import SmartSearch from "@/components/mapa/SmartSearch";
+import UXKPIDashboard from "@/components/dashboard/UXKPIDashboard";
+import { type QuickFilterType } from "@/components/dashboard/SearchPillar";
+import { trackUX, trackResultEngagement } from "@/lib/analytics/ux-tracking";
 import MapaRealYapoDynamic from "@/components/dashboard/MapaRealYapoDynamic";
+import LocationToggle from "@/components/territory/LocationToggle";
+import { useGeolocation } from "@/hooks/useGeolocation";
+import { getGoogleMapsDirectionsUrl } from "@/lib/maps/directions";
+import type { MapLayerId } from "@/lib/maps/types";
+import { BARRIO_COORDS, getBarrioPointsForMap } from "@/data/mapa-barrios-coords";
+import { getProfesionalesPorBarrio } from "@/data/mapa-profesionales-empresas-mock";
+import dynamic from "next/dynamic";
 import {
   SEMAPHORES_MAP,
   getStateStyle,
@@ -13,7 +24,12 @@ import {
   type SemaphoreBarrio,
   type SemaphoreState,
 } from "@/data/semaphores-map";
-import { OFICIOS_20 } from "@/data/mapa-funcionalidades-busqueda";
+import { OFICIOS_20, OFICIOS_ICON } from "@/data/mapa-funcionalidades-busqueda";
+
+const MapGoogleYapo = dynamic(
+  () => import("@/components/dashboard/MapGoogleYapo").then((m) => m.default),
+  { ssr: false, loading: () => <div className="flex min-h-[320px] items-center justify-center rounded-2xl border-2 border-yapo-blue/20 bg-yapo-blue-light/20 text-yapo-blue/80">Cargando mapa…</div> }
+);
 
 export interface ProfesionZona {
   label: string;
@@ -35,6 +51,7 @@ interface ProfesionalEnZona {
   badges?: string[];
   videoCount?: number;
   workHistory?: string;
+  whatsapp?: string | null;
 }
 
 interface EmpresaEnZona {
@@ -84,6 +101,8 @@ const OFICIO_ALIASES: Record<string, string> = {
   ninyera: "Niñera",
   albañil: "Albañil",
   albanil: "Albañil",
+  costurera: "Costurera",
+  costura: "Costurera",
   refrigeracion: "Refrigeración",
   refrigerador: "Refrigeración",
   gasista: "Gasista",
@@ -162,6 +181,11 @@ function detectZonaEnTexto(
 }
 
 export default function MapaGPSPage() {
+  const searchParams = useSearchParams();
+  const showUXDashboard = searchParams.get("ux") === "1";
+  const geo = useGeolocation();
+  const userPosition = geo.position ? { lat: geo.position.lat, lng: geo.position.lng } : null;
+
   const [depto, setDepto] = useState<SemaphoreDepartamento | null>(null);
   const [ciudad, setCiudad] = useState<SemaphoreCiudad | null>(null);
   const [barrio, setBarrio] = useState<SemaphoreBarrio | null>(null);
@@ -176,8 +200,79 @@ export default function MapaGPSPage() {
   const [quickFilter, setQuickFilter] = useState<QuickFilterType>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [expandDepto, setExpandDepto] = useState<Record<string, boolean>>({});
+  const [mapLayer, setMapLayer] = useState<MapLayerId>("zonas");
   const zonaSeleccionadaRef = useRef<HTMLDivElement>(null);
   const profesionalesSectionRef = useRef<HTMLElement>(null);
+
+  const googleMapsApiKey = typeof process !== "undefined" ? process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY : undefined;
+
+  const barrioPoints = useMemo(() => {
+    const countByOficio = barrio && profesionFiltro
+      ? profesiones.find((p) => p.label === profesionFiltro)?.count
+      : undefined;
+    const points = getBarrioPointsForMap(
+      barrio
+        ? {
+            barrioId: barrio.id,
+            countByOficio,
+            totalProfesionales: profesionalesZona.length,
+          }
+        : undefined
+    );
+    if (mapLayer === "saturacion" || mapLayer === "segmentacion-oficio") {
+      const match = (profession: string, filterLabel: string) => {
+        const a = profession.toLowerCase().trim();
+        const b = filterLabel.toLowerCase().trim();
+        return a === b || a.includes(b) || b.includes(a);
+      };
+      for (const p of points) {
+        const profs = getProfesionalesPorBarrio(p.id);
+        p.totalProfesionales = profs.length;
+        if (profesionFiltro)
+          p.countByOficio = profs.filter((pr) => match(pr.profession, profesionFiltro)).length;
+      }
+    }
+    return points;
+  }, [barrio, profesionFiltro, profesiones, profesionalesZona.length, mapLayer]);
+
+  const empresasMarkers = useMemo(() => {
+    return empresasZona
+      .map((e) => {
+        const coords = BARRIO_COORDS[e.barrioId];
+        if (!coords) return null;
+        return {
+          userId: e.userId,
+          name: e.name,
+          lat: coords.lat,
+          lng: coords.lng,
+          buscan: e.buscan ?? [],
+          type: e.type,
+        };
+      })
+      .filter(Boolean) as { userId: string; name: string; lat: number; lng: number; buscan: string[]; type: "pyme" | "enterprise" }[];
+  }, [empresasZona]);
+
+  const profesionalesMarkers = useMemo(() => {
+    return profesionalesZona.map((p) => {
+      const coords = BARRIO_COORDS[p.barrioId] ?? { lat: -25.28, lng: -57.63 };
+      return {
+        userId: p.userId,
+        name: p.name,
+        profession: p.profession,
+        lat: coords.lat,
+        lng: coords.lng,
+        rating: p.rating,
+        geolocationEnabled: true,
+      };
+    });
+  }, [profesionalesZona]);
+
+  const empresasParaCapaBuscan = useMemo(() => {
+    if (mapLayer !== "empresas-buscan-mi-servicio" || !profesionFiltro) return empresasMarkers;
+    return empresasMarkers.filter((e) =>
+      e.buscan.some((b) => b.toLowerCase().includes(profesionFiltro.toLowerCase()))
+    );
+  }, [mapLayer, profesionFiltro, empresasMarkers]);
 
   const ciudades = depto?.ciudades ?? [];
   const barrios = ciudad?.barrios ?? [];
@@ -249,17 +344,6 @@ export default function MapaGPSPage() {
     setProfesionFiltro(null);
   }, []);
 
-  /** Al enviar búsqueda: intenta detectar zona y oficio en el texto y actualiza filtros. */
-  const handleBuscarSubmit = useCallback(() => {
-    const q = searchQuery.trim();
-    if (!q) return;
-    const zona = detectZonaEnTexto(q, SEMAPHORES_MAP);
-    if (zona) selectBarrio(zona.depto, zona.ciudad, zona.barrio);
-    const oficio = detectOficioEnTexto(q);
-    if (oficio) setProfesionFiltro(oficio);
-    zonaSeleccionadaRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }, [searchQuery, selectBarrio]);
-
   /** Primera zona del mapa (Central > Asunción > Botánico) para mostrar resultados al elegir solo oficio. */
   const primeraZona = SEMAPHORES_MAP[0]?.ciudades?.[0]?.barrios?.[0]
     ? {
@@ -268,6 +352,22 @@ export default function MapaGPSPage() {
         barrio: SEMAPHORES_MAP[0].ciudades[0].barrios[0],
       }
     : null;
+
+  /** Al enviar búsqueda: detecta zona y oficio; si solo hay oficio, fija zona por defecto para mostrar resultados. */
+  const handleBuscarSubmit = useCallback(() => {
+    const q = searchQuery.trim();
+    if (!q) return;
+    const zona = detectZonaEnTexto(q, SEMAPHORES_MAP);
+    const oficio = detectOficioEnTexto(q);
+    if (zona) {
+      selectBarrio(zona.depto, zona.ciudad, zona.barrio);
+    } else if (oficio && primeraZona) {
+      selectBarrio(primeraZona.depto, primeraZona.ciudad, primeraZona.barrio);
+    }
+    if (oficio) setProfesionFiltro(oficio);
+    zonaSeleccionadaRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    setTimeout(() => profesionalesSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 300);
+  }, [searchQuery, selectBarrio, primeraZona]);
 
   /** Al clicar un oficio: si no hay zona elegida, fijar primera zona para mostrar lista; filtrar por oficio y scroll a resultados. */
   const handleOficioClick = useCallback(
@@ -300,9 +400,6 @@ export default function MapaGPSPage() {
     } else if (quickFilter === "amateur") {
       list = list.filter((p) => !p.documentVerified && !p.matriculado);
     }
-    // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/cdb4230b-daff-48fe-87c3-cb3e79b1f0a1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'mapa/page.tsx:profesionalesFiltrados',message:'quick filter',data:{quickFilter,zonaLen:profesionalesZona.length,listLen:list.length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H4'})}).catch(()=>{});
-    // #endregion
     return [...list].sort((a, b) => {
       const aMat = a.matriculado ? 1 : 0;
       const bMat = b.matriculado ? 1 : 0;
@@ -319,22 +416,52 @@ export default function MapaGPSPage() {
     0
   );
 
+  useEffect(() => {
+    trackUX({
+      task: "Buscar profesional",
+      metrics: ["time_to_first_search", "clicks_to_result", "scroll_depth", "filter_usage", "abandonment_probability"],
+    });
+  }, []);
+
   return (
     <main className="flex min-h-screen flex-col bg-yapo-blue-light/30 px-4 pb-24 pt-6">
       <header className="mb-4">
-        <h1 className="text-xl font-bold text-yapo-blue">Buscador YAPÓ</h1>
+        <h1 className="text-xl font-bold text-yapo-blue">Mapa de búsqueda YAPÓ</h1>
         <p className="mt-0.5 text-sm text-foreground/70">
-          Escribí oficio y zona (ej. plomero Fernando de la Mora San Miguel) o elegí abajo.
+          Único mapa enlazado con Google Maps. Segmentación por oficio, empresas, profesionales y más.
         </p>
       </header>
 
-      {/* Mapa territorial real (OpenStreetMap) con puntos por zona */}
-      <section className="mb-6" aria-label="Mapa territorial">
+      {/* SmartSearch: jerarquía clara, CTA único, prueba social */}
+      <SmartSearch
+        query={searchQuery}
+        onQueryChange={setSearchQuery}
+        onSearch={handleBuscarSubmit}
+        professionalsCount={3200}
+        className="mb-4"
+      />
+      <div className="mb-4 rounded-xl border border-yapo-blue/20 bg-yapo-white/95 p-3">
+        <p className="mb-2 text-xs text-foreground/60">Opcional: activá tu ubicación para ver distancia en el mapa</p>
+        <LocationToggle
+          realTimeEnabled={geo.realTimeEnabled}
+          onRealTimeChange={geo.setRealTimeEnabled}
+          onRequestMyLocation={geo.requestPosition}
+          position={geo.position}
+          error={geo.error}
+          loading={geo.loading}
+        />
+      </div>
+
+      {/* Mapa único: Google Maps (si hay API key) con capas; si no, OpenStreetMap */}
+      <section className="mb-6" aria-label="Mapa de búsqueda">
         <div className="mb-3 flex flex-wrap items-center gap-4 rounded-xl bg-yapo-white/90 px-4 py-3 text-sm shadow-sm">
           <span className="font-semibold text-yapo-blue">Total zonas:</span>
           <span className="text-foreground/90">{totalBarrios} barrios</span>
           <span className="font-semibold text-yapo-blue">Departamentos:</span>
           <span className="text-foreground/90">{SEMAPHORES_MAP.length}</span>
+          {userPosition && (
+            <span className="font-semibold text-yapo-emerald">Tu GPS en el mapa</span>
+          )}
           {barrio && !loadingZonas && (
             <>
               <span className="font-semibold text-yapo-emerald">En zona:</span>
@@ -342,108 +469,137 @@ export default function MapaGPSPage() {
             </>
           )}
         </div>
-        <MapaRealYapoDynamic height="320px" showLegend />
+        {googleMapsApiKey ? (
+          <MapGoogleYapo
+            apiKey={googleMapsApiKey}
+            height="320px"
+            userPosition={userPosition}
+            barrioPoints={barrioPoints}
+            layer={mapLayer}
+            profesionFiltro={profesionFiltro}
+            empresas={mapLayer === "empresas-buscan-mi-servicio" ? empresasParaCapaBuscan : empresasMarkers}
+            profesionales={mapLayer === "profesionales" ? profesionalesMarkers : []}
+            showLayerSelector
+            selectedBarrioId={barrio?.id ?? null}
+            onLayerChange={setMapLayer}
+            onBarrioSelect={(barrioId) => {
+              for (const d of SEMAPHORES_MAP) {
+                for (const c of d.ciudades) {
+                  const b = c.barrios.find((x) => x.id === barrioId);
+                  if (b) {
+                    selectBarrio(d, c, b);
+                    return;
+                  }
+                }
+              }
+            }}
+          />
+        ) : (
+          <MapaRealYapoDynamic height="320px" showLegend userPosition={userPosition} />
+        )}
       </section>
 
-      <SearchPillar
-        simple
-        query={searchQuery}
-        onQueryChange={setSearchQuery}
-        onQuerySubmit={handleBuscarSubmit}
-        placeholder="ej. plomero Fernando de la Mora San Miguel"
-      />
+      {/* Filtros: oficio + zona — diseño claro y de baja fricción */}
+      <section
+        id="filtros-zona"
+        ref={zonaSeleccionadaRef}
+        className="mb-4 overflow-hidden rounded-2xl border border-yapo-blue/10 bg-yapo-white shadow-lg shadow-yapo-blue/5"
+        aria-label="Buscar por oficio y zona"
+      >
+        {/* ¿Qué necesitás? — oficios con iconos */}
+        <div className="border-b border-yapo-blue/5 bg-gradient-to-b from-yapo-blue-light/5 to-transparent px-4 py-4 sm:px-5">
+          <h3 className="mb-3 text-sm font-semibold text-yapo-blue">¿Qué necesitás?</h3>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            {OFICIOS_20.map((cat) => {
+              const icon = OFICIOS_ICON[cat] ?? "👤";
+              const active = profesionFiltro === cat;
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => handleOficioClick(cat)}
+                  className={`flex items-center gap-2 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yapo-blue/30 focus:ring-offset-2 ${
+                    active
+                      ? "bg-yapo-blue text-white shadow-md"
+                      : "bg-white text-foreground/90 shadow-sm ring-1 ring-yapo-blue/10 hover:bg-yapo-blue-light/20 hover:ring-yapo-blue/20"
+                  }`}
+                >
+                  <span className="text-lg leading-none" aria-hidden>{icon}</span>
+                  <span className="min-w-0 truncate">{cat}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-      <section id="filtros-zona" className="mb-4 rounded-2xl border-2 border-yapo-blue/15 bg-yapo-white p-4 shadow-sm" aria-label="Zona y oficios">
-        <p className="mb-2 text-xs font-medium text-foreground/70">Oficios (20)</p>
-        <div className="mb-4 flex flex-wrap gap-2">
-          {OFICIOS_20.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              onClick={() => handleOficioClick(cat)}
-              className={`rounded-full px-3 py-1.5 text-sm font-medium transition-all ${profesionFiltro === cat ? "bg-yapo-blue text-white shadow-md" : "bg-yapo-blue-light/30 text-yapo-blue hover:bg-yapo-blue/20"}`}
+        {/* ¿Dónde? — departamento → ciudad → barrio */}
+        <div className="px-4 py-4 sm:px-5">
+          <h3 className="mb-3 text-sm font-semibold text-yapo-blue">¿Dónde?</h3>
+          <div className="flex flex-wrap items-stretch gap-2 sm:gap-3">
+            <select
+              value={depto?.id ?? ""}
+              onChange={(e) => {
+                const d = SEMAPHORES_MAP.find((x) => x.id === e.target.value) ?? null;
+                setDepto(d);
+                setCiudad(null);
+                setBarrio(null);
+              }}
+              className="min-w-[140px] flex-1 rounded-xl border border-yapo-blue/15 bg-white px-4 py-2.5 text-sm text-yapo-blue transition-colors focus:border-yapo-blue focus:outline-none focus:ring-2 focus:ring-yapo-blue/20 sm:flex-initial"
+              aria-label="Departamento"
             >
-              {cat}
-            </button>
-          ))}
+              <option value="">Departamento</option>
+              {SEMAPHORES_MAP.map((d) => (
+                <option key={d.id} value={d.id}>{d.name}</option>
+              ))}
+            </select>
+            <select
+              value={ciudad?.id ?? ""}
+              onChange={(e) => {
+                const c = ciudades.find((x) => x.id === e.target.value) ?? null;
+                setCiudad(c);
+                setBarrio(null);
+              }}
+              className="min-w-[140px] flex-1 rounded-xl border border-yapo-blue/15 bg-white px-4 py-2.5 text-sm text-yapo-blue transition-colors focus:border-yapo-blue focus:outline-none focus:ring-2 focus:ring-yapo-blue/20 disabled:opacity-50 sm:flex-initial"
+              aria-label="Ciudad"
+              disabled={!depto}
+            >
+              <option value="">Ciudad</option>
+              {ciudades.map((c) => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
+            <select
+              value={barrio?.id ?? ""}
+              onChange={(e) => {
+                const b = barrios.find((x) => x.id === e.target.value) ?? null;
+                setBarrio(b);
+              }}
+              className="min-w-[140px] flex-1 rounded-xl border border-yapo-blue/15 bg-white px-4 py-2.5 text-sm text-yapo-blue transition-colors focus:border-yapo-blue focus:outline-none focus:ring-2 focus:ring-yapo-blue/20 disabled:opacity-50 sm:flex-initial"
+              aria-label="Barrio"
+              disabled={!ciudad}
+            >
+              <option value="">Barrio</option>
+              {barrios.map((b) => (
+                <option key={b.id} value={b.id}>{b.name}</option>
+              ))}
+            </select>
+          </div>
+          {barrio && (
+            <p className="mt-3 flex flex-wrap items-center gap-2 text-sm text-foreground/80">
+              <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${getStateStyle(barrio.state as SemaphoreState)}`}>
+                {barrio.name}
+              </span>
+              {ciudad && <span>{ciudad.name}</span>}
+              {depto && <span className="text-foreground/60">{depto.name}</span>}
+              {!loadingZonas && (
+                <span className="text-yapo-emerald">
+                  · {profesionalesZona.length} profesionales, {empresasZona.length} PyMEs
+                </span>
+              )}
+            </p>
+          )}
         </div>
-        <p className="mb-2 text-xs font-medium text-foreground/70">Zona (barrio)</p>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <select
-            value={depto?.id ?? ""}
-            onChange={(e) => {
-              const d = SEMAPHORES_MAP.find((x) => x.id === e.target.value) ?? null;
-              setDepto(d);
-              setCiudad(null);
-              setBarrio(null);
-            }}
-            className="rounded-xl border border-yapo-blue/20 bg-white px-3 py-2.5 text-sm text-yapo-blue"
-            aria-label="Departamento"
-          >
-            <option value="">Departamento</option>
-            {SEMAPHORES_MAP.map((d) => (
-              <option key={d.id} value={d.id}>{d.name}</option>
-            ))}
-          </select>
-          <select
-            value={ciudad?.id ?? ""}
-            onChange={(e) => {
-              const c = ciudades.find((x) => x.id === e.target.value) ?? null;
-              setCiudad(c);
-              setBarrio(null);
-            }}
-            className="rounded-xl border border-yapo-blue/20 bg-white px-3 py-2.5 text-sm text-yapo-blue"
-            aria-label="Ciudad"
-            disabled={!depto}
-          >
-            <option value="">Ciudad</option>
-            {ciudades.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}</option>
-            ))}
-          </select>
-          <select
-            value={barrio?.id ?? ""}
-            onChange={(e) => {
-              const b = barrios.find((x) => x.id === e.target.value) ?? null;
-              setBarrio(b);
-            }}
-            className="rounded-xl border border-yapo-blue/20 bg-white px-3 py-2.5 text-sm text-yapo-blue"
-            aria-label="Barrio"
-            disabled={!ciudad}
-          >
-            <option value="">Barrio</option>
-            {barrios.map((b) => (
-              <option key={b.id} value={b.id}>{b.name}</option>
-            ))}
-          </select>
-        </div>
-        {barrio && (
-          <p className="mt-2 text-xs text-yapo-blue/90">
-            Mostrando resultados en <strong>{barrio.name}</strong>
-            {depto && ciudad && ` · ${ciudad.name}, ${depto.name}`}
-          </p>
-        )}
       </section>
-
-      <section className="mb-4 flex flex-wrap items-center gap-4 rounded-xl bg-yapo-white/80 px-4 py-2.5 text-sm" aria-label="Resumen">
-        <span className="font-medium text-yapo-blue">{SEMAPHORES_MAP.length} dep.</span>
-        <span className="text-foreground/70">{totalBarrios} barrios</span>
-        {barrio && !loadingZonas && (
-          <>
-            <span className="text-yapo-emerald font-medium">{profesionalesZona.length} profesionales</span>
-            <span className="text-foreground/70">{empresasZona.length} PyMEs</span>
-          </>
-        )}
-      </section>
-
-      {/* Zona seleccionada (resumen corto) */}
-      {barrio && (
-        <section ref={zonaSeleccionadaRef} className="mb-2 flex flex-wrap items-center gap-2 rounded-xl bg-yapo-blue/10 px-3 py-2" aria-label="Zona actual">
-          <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${getStateStyle(barrio.state as SemaphoreState)}`}>{barrio.name}</span>
-          {ciudad && <span className="text-xs text-foreground/70">{ciudad.name}</span>}
-          {depto && <span className="text-xs text-foreground/70">{depto.name}</span>}
-        </section>
-      )}
 
       {/* Resultados en la zona: chips de oficio + lista (estilo Indeed/Fiverr) */}
       {barrio && (
@@ -452,7 +608,10 @@ export default function MapaGPSPage() {
           className="mb-6 rounded-2xl border-2 border-yapo-blue/15 bg-yapo-white p-4 shadow-sm"
           aria-label="Resultados en la zona"
         >
-          <h2 className="mb-2 text-base font-bold text-yapo-blue">En {barrio.name}</h2>
+          <h2 className="mb-1 text-base font-bold text-yapo-blue">En {barrio.name}</h2>
+          {profesionFiltro && (
+            <p className="mb-2 text-sm text-foreground/80">Mostrando resultados para <strong>{profesionFiltro}</strong></p>
+          )}
           {loadingProfesiones || loadingZonas ? (
             <div className="flex items-center justify-center py-10 text-sm text-foreground/70">
               <span className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-yapo-blue border-t-transparent" aria-hidden />
@@ -477,6 +636,9 @@ export default function MapaGPSPage() {
                   ))}
                 </div>
               )}
+              <p className="mb-3 text-xs text-foreground/60">
+                Ordenado por: verificación, matriculación y valoración (mejores primero).
+              </p>
               <div className="space-y-2">
                 {profesionalesFiltrados.length === 0 ? (
                   <div className="rounded-xl border-2 border-yapo-blue/10 bg-yapo-blue-light/10 px-4 py-6 text-center">
@@ -511,38 +673,78 @@ export default function MapaGPSPage() {
                     </div>
                   </div>
                 ) : (
-                  profesionalesFiltrados.map((p) => (
-                    <div key={p.userId} className="flex items-center gap-3 rounded-xl border border-yapo-blue/10 bg-white p-3">
-                      <Link href={`/profile/${encodeURIComponent(p.userId)}`} className="flex min-w-0 flex-1 items-center gap-3">
-                        <Avatar src={p.image} name={p.name} size="md" className="h-12 w-12 shrink-0" />
-                        <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-center gap-1.5">
-                            <span className="font-semibold text-yapo-blue">{p.name}</span>
-                            {p.verified && <span className="text-yapo-emerald" title="Verificado">✓</span>}
-                            {p.documentVerified && <span className="rounded bg-yapo-blue/15 px-1.5 py-0.5 text-xs text-yapo-blue" title="Documento verificado">🪪 ID</span>}
-                            {p.matriculado && (
-                              <span className="rounded bg-yapo-amber/20 px-1.5 py-0.5 text-xs font-medium text-yapo-amber-dark" title="Profesional Matriculado">
-                                📜 {p.matriculado}
-                              </span>
-                            )}
-                            <span className="rounded bg-yapo-blue/10 px-1.5 py-0.5 text-xs font-medium text-yapo-blue">{p.profession}</span>
+                  profesionalesFiltrados.map((p) => {
+                    const barrioCoords = BARRIO_COORDS[p.barrioId];
+                    const directionsUrl = barrioCoords
+                      ? getGoogleMapsDirectionsUrl(
+                          userPosition ?? null,
+                          { lat: barrioCoords.lat, lng: barrioCoords.lng },
+                          `${p.name} · ${barrioCoords.name}`
+                        )
+                      : null;
+                    return (
+                      <div key={p.userId} className="flex flex-wrap items-center gap-3 rounded-xl border border-yapo-blue/10 bg-white p-3">
+                        <Link
+                          href={`/profile/${encodeURIComponent(p.userId)}`}
+                          className="flex min-w-0 flex-1 items-center gap-3"
+                          onClick={() => trackResultEngagement("Ver perfil", { profesionalId: p.userId, profession: p.profession })}
+                        >
+                          <Avatar src={p.image} name={p.name} size="md" className="h-12 w-12 shrink-0" />
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <span className="font-semibold text-yapo-blue">{p.name}</span>
+                              <span className="rounded bg-yapo-blue/15 px-1.5 py-0.5 text-xs font-medium text-yapo-blue/90" title="Tipo de usuario">{p.role}</span>
+                              {p.verified && <span className="text-yapo-emerald" title="Verificado">✓</span>}
+                              {p.documentVerified && <span className="rounded bg-yapo-blue/15 px-1.5 py-0.5 text-xs text-yapo-blue" title="Documento verificado">🪪 ID</span>}
+                              {p.matriculado && (
+                                <span className="rounded bg-yapo-amber/20 px-1.5 py-0.5 text-xs font-medium text-yapo-amber-dark" title="Profesional Matriculado">
+                                  📜 {p.matriculado}
+                                </span>
+                              )}
+                              <span className="rounded bg-yapo-blue/10 px-1.5 py-0.5 text-xs font-medium text-yapo-blue">{p.profession}</span>
+                            </div>
+                            <p className="mt-0.5 flex flex-wrap items-center gap-2 text-sm text-foreground/70">
+                              <Stars rating={p.rating} />
+                              <span>{p.rating}</span>
+                              {p.workHistory && <span>· {p.workHistory}</span>}
+                              {p.badges && p.badges.length > 0 && <span>· {p.badges.slice(0, 3).join(", ")}</span>}
+                            </p>
                           </div>
-                          <p className="mt-0.5 flex items-center gap-2 text-sm text-foreground/70">
-                            <Stars rating={p.rating} />
-                            <span>{p.rating}</span>
-                            {p.workHistory && <span>· {p.workHistory}</span>}
-                          </p>
+                          <span className="shrink-0 text-sm font-medium text-yapo-blue">Ver →</span>
+                        </Link>
+                        <div className="flex shrink-0 flex-wrap items-center gap-2">
+                          {p.whatsapp && (
+                            <a
+                              href={`https://wa.me/595${p.whatsapp.replace(/\D/g, "").replace(/^0/, "")}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn-interactive inline-flex items-center gap-1.5 rounded-xl border-2 border-green-500/50 bg-green-500/10 px-3 py-1.5 text-xs font-semibold text-green-700 shadow-sm hover:bg-green-500/20"
+                              onClick={() => trackResultEngagement("WhatsApp", { profesionalId: p.userId, profession: p.profession })}
+                            >
+                              WhatsApp
+                            </a>
+                          )}
+                          {directionsUrl && (
+                            <a
+                              href={directionsUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn-interactive inline-block rounded-xl border-2 border-yapo-blue/50 px-3 py-1.5 text-xs font-semibold text-yapo-blue shadow-sm hover:bg-yapo-blue/15"
+                            >
+                              Cómo llegar
+                            </a>
+                          )}
+                          <Link
+                            href={`/trabajo/aceptar?profesionalId=${encodeURIComponent(p.userId)}&nombreProfesional=${encodeURIComponent(p.name)}`}
+                            className="btn-interactive inline-block rounded-xl bg-yapo-cta px-3 py-1.5 text-xs font-semibold text-yapo-white shadow-sm border-2 border-yapo-cta-hover/50 hover:bg-yapo-cta-hover"
+                            onClick={() => trackResultEngagement("Contratar", { profesionalId: p.userId, profession: p.profession })}
+                          >
+                            Aceptar propuesta
+                          </Link>
                         </div>
-                        <span className="shrink-0 text-sm font-medium text-yapo-blue">Ver →</span>
-                      </Link>
-                      <Link
-                        href={`/trabajo/aceptar?profesionalId=${encodeURIComponent(p.userId)}&nombreProfesional=${encodeURIComponent(p.name)}`}
-                        className="shrink-0 rounded-lg bg-yapo-blue px-3 py-1.5 text-xs font-medium text-yapo-white"
-                      >
-                        Aceptar propuesta
-                      </Link>
-                    </div>
-                  ))
+                      </div>
+                    );
+                  })
                 )}
               </div>
             </>
@@ -558,21 +760,47 @@ export default function MapaGPSPage() {
             <p className="rounded-xl bg-yapo-blue-light/10 px-4 py-3 text-sm text-foreground/70">Aún no hay PyMEs en este barrio.</p>
           ) : (
             <ul className="space-y-2">
-              {empresasZona.map((e) => (
-                <li key={e.userId}>
-                  <Link href={`/profile/${encodeURIComponent(e.userId)}`} className="flex items-center justify-between gap-2 rounded-xl border border-yapo-blue/10 p-3 transition-[box-shadow] hover:shadow-md">
-                    <div className="min-w-0">
-                      <span className="font-medium text-yapo-blue">{e.name}</span>
-                      {e.buscan?.length > 0 && <p className="mt-0.5 truncate text-xs text-foreground/70">Buscan: {e.buscan.slice(0, 3).join(", ")}</p>}
+              {empresasZona.map((e) => {
+                const barrioCoords = BARRIO_COORDS[e.barrioId];
+                const directionsUrl = barrioCoords
+                  ? getGoogleMapsDirectionsUrl(
+                      userPosition ?? null,
+                      { lat: barrioCoords.lat, lng: barrioCoords.lng },
+                      `${e.name} · ${barrioCoords.name}`
+                    )
+                  : null;
+                return (
+                  <li key={e.userId}>
+                    <div className="nav-card-interactive flex flex-wrap items-center justify-between gap-2 rounded-xl border-2 border-yapo-blue/15 p-3 hover:border-yapo-cta/30">
+                      <Link href={`/profile/${encodeURIComponent(e.userId)}`} className="min-w-0 flex-1">
+                        <div className="min-w-0">
+                          <span className="font-medium text-yapo-blue">{e.name}</span>
+                          {e.buscan?.length > 0 && <p className="mt-0.5 truncate text-xs text-foreground/70">Buscan: {e.buscan.slice(0, 3).join(", ")}</p>}
+                        </div>
+                      </Link>
+                      <div className="flex shrink-0 items-center gap-2">
+                        {directionsUrl && (
+                          <a
+                            href={directionsUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn-interactive inline-block rounded-xl border-2 border-yapo-blue/50 px-2 py-1 text-xs font-semibold text-yapo-blue shadow-sm hover:bg-yapo-blue/15"
+                          >
+                            Cómo llegar
+                          </a>
+                        )}
+                        <span className="rounded-full bg-yapo-blue/20 px-2 py-0.5 text-xs font-medium text-yapo-blue">{e.type === "enterprise" ? "E" : "PyME"}</span>
+                      </div>
                     </div>
-                    <span className="shrink-0 rounded-full bg-yapo-blue/20 px-2 py-0.5 text-xs font-medium text-yapo-blue">{e.type === "enterprise" ? "E" : "PyME"}</span>
-                  </Link>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </section>
       )}
+
+      {showUXDashboard && <UXKPIDashboard className="mb-6" />}
 
       <section className="mb-6">
         <Link

@@ -135,7 +135,7 @@ export default function DashboardPage() {
       <section className="mb-6" aria-label="Mapa territorial">
         <div className="mb-2 flex items-center justify-between gap-2">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-yapo-blue/80">Mapa territorial</h2>
-          <Link href="/mapa" className="text-xs font-medium text-yapo-blue underline underline-offset-2">Ver buscador por zona →</Link>
+          <Link href="/mapa" className="btn-interactive inline-block rounded-xl border-2 border-yapo-blue/40 bg-yapo-blue/10 px-3 py-2 text-xs font-semibold text-yapo-blue shadow-sm hover:bg-yapo-blue/20">Ver buscador por zona →</Link>
         </div>
         <MapaRealYapoDynamic height="280px" showLegend />
       </section>

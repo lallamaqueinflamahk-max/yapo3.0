@@ -21,14 +21,15 @@ export default function YapoCardFeed({
   if (scrollHorizontal) {
     return (
       <div
-        className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory"
+        className="flex gap-4 overflow-x-auto overflow-y-visible px-4 pb-2 scrollbar-hide snap-x snap-mandatory [-webkit-overflow-scrolling:touch]"
         role="list"
-        aria-label="Feed de profesionales YAPÓ"
+        aria-label="Carrusel de profesionales YAPÓ. Deslizá para ver más."
+        style={{ scrollPaddingInline: "1rem" }}
       >
         {perfiles.map((p) => (
           <div
             key={p.perfil_id}
-            className="w-[min(320px,85vw)] shrink-0 snap-start"
+            className="w-[min(300px,78vw)] shrink-0 snap-start"
             role="listitem"
           >
             <YapoCard perfil={p} onContratar={onContratar} compact />
