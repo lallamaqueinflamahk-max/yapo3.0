@@ -1,3 +1,4 @@
+/** Layout raíz — YAPÓ 3.0. Deploy: vercel desde main. */
 import type { Metadata } from "next";
 import { Inter, Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import { SessionProvider as NextAuthSessionProvider } from "next-auth/react";
