@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import Avatar from "@/components/ui/Avatar";
@@ -15,7 +15,7 @@ import { getGoogleMapsDirectionsUrl } from "@/lib/maps/directions";
 import type { MapLayerId } from "@/lib/maps/types";
 import { BARRIO_COORDS, getBarrioPointsForMap } from "@/data/mapa-barrios-coords";
 import { getProfesionalesPorBarrio } from "@/data/mapa-profesionales-empresas-mock";
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 import {
   SEMAPHORES_MAP,
   getStateStyle,
@@ -26,7 +26,7 @@ import {
 } from "@/data/semaphores-map";
 import { OFICIOS_20, OFICIOS_ICON } from "@/data/mapa-funcionalidades-busqueda";
 
-const MapGoogleYapo = dynamic(
+const MapGoogleYapo = nextDynamic(
   () => import("@/components/dashboard/MapGoogleYapo").then((m) => m.default),
   { ssr: false, loading: () => <div className="flex min-h-[320px] items-center justify-center rounded-2xl border-2 border-yapo-blue/20 bg-yapo-blue-light/20 text-yapo-blue/80">Cargando mapa…</div> }
 );
@@ -180,7 +180,7 @@ function detectZonaEnTexto(
   return null;
 }
 
-export default function MapaGPSPage() {
+function MapaGPSPageContent() {
   const searchParams = useSearchParams();
   const showUXDashboard = searchParams.get("ux") === "1";
   const geo = useGeolocation();
@@ -811,5 +811,13 @@ export default function MapaGPSPage() {
         </Link>
       </section>
     </main>
+  );
+}
+
+export default function MapaGPSPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-yapo-blue-light/30 text-yapo-blue">Cargando mapa…</div>}>
+      <MapaGPSPageContent />
+    </Suspense>
   );
 }
