@@ -2,10 +2,12 @@
 
 /**
  * Si el usuario está autenticado (no SAFE MODE) y no tiene consentimiento vigente, redirige a /consent.
+ * No redirige a login si NextAuth está "authenticated" y identity aún no sincronizó (AuthSessionBridge).
  */
 
 import { useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useSession as useNextAuthSession } from "next-auth/react";
 import { useSession } from "@/lib/auth";
 import { SAFE_MODE_CLIENT } from "@/lib/auth/dev/safeMode";
 
@@ -22,6 +24,7 @@ function isPublicPath(path: string | null): boolean {
 export function ConsentGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { data: nextAuthSession, status: nextAuthStatus } = useNextAuthSession();
   const { identity, isSafeMode } = useSession();
   const consentChecked = useRef(false);
 
@@ -29,8 +32,11 @@ export function ConsentGuard({ children }: { children: React.ReactNode }) {
     if (SAFE_MODE_CLIENT || isSafeMode) return;
     if (AUTH_PATHS.some((p) => pathname?.startsWith(p))) return;
 
+    const nextAuthAuthenticated = nextAuthStatus === "authenticated" && !!nextAuthSession?.user;
     if (!identity?.userId) {
-      if (!isPublicPath(pathname ?? null)) {
+      const publicPath = isPublicPath(pathname ?? null);
+      const willRedirect = !nextAuthAuthenticated && !publicPath;
+      if (willRedirect) {
         router.replace(LOGIN_PATH);
       }
       return;
@@ -51,7 +57,7 @@ export function ConsentGuard({ children }: { children: React.ReactNode }) {
       .finally(() => {
         consentChecked.current = false;
       });
-  }, [pathname, identity?.userId, isSafeMode, router]);
+  }, [pathname, identity?.userId, isSafeMode, nextAuthStatus, nextAuthSession?.user, router]);
 
   return <>{children}</>;
 }

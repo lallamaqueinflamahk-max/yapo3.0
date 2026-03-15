@@ -12,8 +12,9 @@ import { useSession } from "@/lib/auth";
 import { SAFE_MODE_CLIENT } from "@/lib/auth/dev/safeMode";
 import type { Session as YapoSession } from "@/lib/auth/types";
 import type { RoleId } from "@/lib/auth";
+import { SESSION_MAX_AGE_SECONDS } from "@/lib/auth-next/constants";
 
-const EXPIRES_MS = 30 * 24 * 60 * 60 * 1000;
+const EXPIRES_MS = SESSION_MAX_AGE_SECONDS * 1000;
 
 function nextAuthToYapoSession(
   userId: string,

@@ -1,56 +1,59 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 
-const ITEMS = [
-  { id: "empleo-cerca", href: "/mapa", label: "Buscar empleo cerca", image: "/images/icon-buscar.png" },
-  { id: "top-ofertas", href: "/home#profesionales", label: "Top ofertas hoy", icon: "⭐" },
-  { id: "postulaciones", href: "/profile#curriculum", label: "Mis postulaciones", icon: "📄" },
-  { id: "mensajes", href: "/chat", label: "Mensajes", icon: "💬" },
-  { id: "billetera", href: "/wallet", label: "Mi billetera", image: "/images/icon-billetera.png" },
-  { id: "escudo", href: "/escudos", label: "Activar escudo", image: "/images/icon-escudo.png" },
+const ITEMS_COLLAPSED = [
+  { id: "publicar", href: "/mapa?servicios=1", label: "Ofrecer mis servicios", icon: "📤" },
+  { id: "mensajes", href: "/chat", label: "Ver mis conversaciones", icon: "💬" },
+  { id: "billetera", href: "/wallet", label: "Ver mis pagos", icon: "💰" },
 ];
 
+/**
+ * Nivel 2: acciones secundarias colapsables en "Más opciones".
+ * Un único CTA principal por viewport (CerebroBar).
+ */
 export default function QuickActionsGrid() {
+  const [expanded, setExpanded] = useState(false);
+
   return (
-    <section className="mx-auto w-full max-w-[390px] px-4 mt-5 sm:max-w-7xl" aria-label="Accesos rápidos">
-      <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-        {ITEMS.map(({ id, href, label, icon, image }) => (
-          <Link
-            key={id}
-            href={href}
-            title={label}
-            className="group relative inline-flex shrink-0 items-center justify-center transition-transform duration-200 hover:scale-110 active:scale-95"
-            aria-label={label}
-          >
-            {(image ?? icon) ? (
-              <>
-                {image ? (
-                  <>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={image}
-                      alt=""
-                      className="h-16 w-auto max-w-[80px] object-contain drop-shadow-md transition-shadow duration-200 group-hover:drop-shadow-xl sm:h-20 sm:max-w-[100px] md:h-24 md:max-w-[120px]"
-                    />
-                    <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-yapo-petroleo px-2.5 py-1.5 text-xs font-semibold text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover:opacity-100">
-                      {label}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-4xl drop-shadow-md transition-all duration-200 group-hover:scale-110 sm:text-5xl md:text-6xl" aria-hidden>
-                      {icon}
-                    </span>
-                    <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-yapo-petroleo px-2.5 py-1.5 text-xs font-semibold text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover:opacity-100">
-                      {label}
-                    </span>
-                  </>
-                )}
-              </>
-            ) : null}
-          </Link>
-        ))}
+    <section className="mx-auto w-full max-w-[390px] px-4 mt-6 sm:max-w-7xl" aria-label="Más opciones">
+      <button
+        type="button"
+        onClick={() => setExpanded(!expanded)}
+        className="flex w-full items-center justify-between rounded-xl border-2 border-yapo-blue/15 bg-yapo-white px-4 py-3 text-left text-sm font-medium text-yapo-petroleo transition-colors hover:border-yapo-blue/30 hover:bg-yapo-blue-light/10 focus:outline-none focus:ring-2 focus:ring-yapo-blue/20"
+        aria-expanded={expanded}
+        aria-controls="mas-opciones-content"
+        id="mas-opciones-trigger"
+      >
+        <span>Más opciones</span>
+        <span
+          className={`inline-block transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+          aria-hidden
+        >
+          ˅
+        </span>
+      </button>
+      <div
+        id="mas-opciones-content"
+        role="region"
+        aria-labelledby="mas-opciones-trigger"
+        className={`overflow-hidden transition-all duration-200 ${expanded ? "max-h-48 opacity-100" : "max-h-0 opacity-0"}`}
+      >
+        <div className="mt-2 flex flex-col gap-2 rounded-xl border-2 border-yapo-blue/10 bg-yapo-blue-light/5 p-3">
+          {ITEMS_COLLAPSED.map(({ id, href, label, icon }) => (
+            <Link
+              key={id}
+              href={href}
+              className="nav-card-interactive flex items-center gap-3 rounded-xl border border-yapo-blue/10 bg-yapo-white px-4 py-3 text-sm font-medium text-yapo-petroleo transition-colors hover:border-yapo-blue/30 hover:bg-yapo-blue-light/10"
+            >
+              <span className="text-lg" aria-hidden>
+                {icon}
+              </span>
+              {label}
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );

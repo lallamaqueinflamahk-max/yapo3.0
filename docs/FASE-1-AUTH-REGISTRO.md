@@ -2,6 +2,8 @@
 
 **Objetivo:** Identidad real, registro legal, persistencia en PostgreSQL y perfil mínimo obligatorio. Nadie entra a la app sin sesión; perfil incompleto bloquea Wallet, Cerebro, Chat, Video y Dashboard.
 
+> **Documento unificado de auth:** Ver también `docs/AUTH-SYSTEM.md` para constantes, seguridad, recuperación de contraseña y puntos de integración KYC/verificación facial.
+
 ---
 
 ## 1. Flujo de login

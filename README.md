@@ -62,6 +62,10 @@ Con esto la app queda renderizando en localhost y la base de datos lista para re
 
 ## Configuración y despliegue
 
+- **Backend (API REST, auth, validación, despliegue):** [docs/BACKEND.md](docs/BACKEND.md)
+- **Base de datos (Prisma, migraciones, relaciones):** [docs/datos/BASE-DATOS-YAPO.md](docs/datos/BASE-DATOS-YAPO.md)
+- **Backend y DB en la nube (GCP/DO, monitoreo, backups, mantenimiento):** [docs/DEPLOY-BACKEND-DB-CLOUD.md](docs/DEPLOY-BACKEND-DB-CLOUD.md)
+
 ### Requisitos
 
 - Node.js 18+ (Next 16 requiere Node >= 18)

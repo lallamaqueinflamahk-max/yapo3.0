@@ -3,6 +3,7 @@
 import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { AuthExitNav } from "@/components/auth";
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -50,6 +51,7 @@ function ResetPasswordForm() {
         <Link href="/login" className="text-[var(--yapo-blue)] underline">
           Ir a login
         </Link>
+        <AuthExitNav />
       </main>
     );
   }
@@ -61,6 +63,7 @@ function ResetPasswordForm() {
         <Link href="/forgot-password" className="text-[var(--yapo-blue)] underline">
           Solicitar nuevo enlace
         </Link>
+        <AuthExitNav />
       </main>
     );
   }
@@ -105,6 +108,7 @@ function ResetPasswordForm() {
             {loading ? "Guardando…" : "Restablecer contraseña"}
           </button>
         </form>
+        <AuthExitNav />
       </div>
     </main>
   );

@@ -25,6 +25,7 @@ import WalletBalanceCard from "@/components/wallet/WalletBalanceCard";
 import EscudosChips from "@/components/wallet/EscudosChips";
 import TransactionList from "@/components/wallet/TransactionList";
 import RecibirSection from "@/components/wallet/RecibirSection";
+import CargarSaldoSection from "@/components/wallet/CargarSaldoSection";
 import SendFlow from "@/components/wallet/SendFlow";
 import AcuerdosSection from "@/components/wallet/AcuerdosSection";
 import GarantiasSection from "@/components/wallet/GarantiasSection";
@@ -61,6 +62,8 @@ export default function WalletUI({ userId: userIdProp, onResult, className = "" 
   const [garantias, setGarantias] = useState<EscrowOrder[]>([]);
   const [loadingAcuerdos, setLoadingAcuerdos] = useState(false);
   const [loadingGarantias, setLoadingGarantias] = useState(false);
+  const [acuerdosGarantiasError, setAcuerdosGarantiasError] = useState<string | null>(null);
+  const [retryAcuerdosGarantias, setRetryAcuerdosGarantias] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sendFlowOpen, setSendFlowOpen] = useState(false);
@@ -76,9 +79,11 @@ export default function WalletUI({ userId: userIdProp, onResult, className = "" 
     }
     setLoading(true);
     setError(null);
+    let hasAccount = false;
     try {
       createWalletCore(userId);
       const account = getWalletAccount(userId);
+      hasAccount = !!account;
       if (account) {
         setBalance({
           disponible: account.balanceAvailable,
@@ -112,21 +117,31 @@ export default function WalletUI({ userId: userIdProp, onResult, className = "" 
       setGarantias([]);
       setLoadingAcuerdos(false);
       setLoadingGarantias(false);
+      setAcuerdosGarantiasError(null);
       return;
     }
+    setAcuerdosGarantiasError(null);
     setLoadingAcuerdos(true);
     setLoadingGarantias(true);
-    fetch("/api/wallet/acuerdos")
-      .then((r) => (r.ok ? r.json() : { acuerdos: [] }))
+    const acuerdosPromise = fetch("/api/wallet/acuerdos")
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("Error al cargar acuerdos"))))
       .then((data: { acuerdos?: Acuerdo[] }) => setAcuerdos(data.acuerdos ?? []))
-      .catch(() => setAcuerdos([]))
-      .finally(() => setLoadingAcuerdos(false));
-    fetch("/api/wallet/garantias")
-      .then((r) => (r.ok ? r.json() : { garantias: [] }))
+      .catch(() => setAcuerdos([]));
+    const garantiasPromise = fetch("/api/wallet/garantias")
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("Error al cargar garantías"))))
       .then((data: { garantias?: EscrowOrder[] }) => setGarantias(data.garantias ?? []))
-      .catch(() => setGarantias([]))
-      .finally(() => setLoadingGarantias(false));
-  }, [userId]);
+      .catch(() => setGarantias([]));
+    Promise.allSettled([acuerdosPromise, garantiasPromise])
+      .then(([a, g]) => {
+        const msgA = a.status === "rejected" ? (a as PromiseRejectedResult).reason?.message : null;
+        const msgG = g.status === "rejected" ? (g as PromiseRejectedResult).reason?.message : null;
+        setAcuerdosGarantiasError(msgA ?? msgG ?? null);
+      })
+      .finally(() => {
+        setLoadingAcuerdos(false);
+        setLoadingGarantias(false);
+      });
+  }, [userId, retryAcuerdosGarantias]);
 
   const handleTransferir = useCallback(() => {
     if (!userId) return;
@@ -255,6 +270,18 @@ export default function WalletUI({ userId: userIdProp, onResult, className = "" 
       <section className="mt-5 space-y-4" aria-label="Acuerdos y garantías">
         <AcuerdosSection acuerdos={acuerdos} currentUserId={userId} loading={loadingAcuerdos} />
         <GarantiasSection garantias={garantias} currentUserId={userId} loading={loadingGarantias} />
+        {acuerdosGarantiasError && (
+          <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm text-amber-800 flex flex-wrap items-center gap-2">
+            <span>{acuerdosGarantiasError}</span>
+            <button
+              type="button"
+              onClick={() => setRetryAcuerdosGarantias((n) => n + 1)}
+              className="rounded-lg border border-amber-600/50 bg-amber-500/20 px-3 py-1 font-medium text-amber-800 hover:bg-amber-500/30"
+            >
+              Reintentar
+            </button>
+          </div>
+        )}
         <p className="rounded-xl border border-yapo-blue/10 bg-yapo-blue-light/10 px-3 py-2 text-xs text-foreground/80">
           <strong>En disputa:</strong> YAPÓ retiene el fondo hasta que un mediador revise la evidencia (contrato, fotos). Los pagos en custodia también aparecen en el historial abajo cuando se liberan.
         </p>
@@ -286,6 +313,11 @@ export default function WalletUI({ userId: userIdProp, onResult, className = "" 
             Cobrar o recibir
           </button>
         </div>
+      </section>
+
+      {/* Cargar saldo: Stripe / Pagopar */}
+      <section className="mt-4" aria-label="Cargar saldo">
+        <CargarSaldoSection userId={userId} onSuccess={refresh} />
       </section>
 
       {/* Recibir: usuario para que te envíen */}

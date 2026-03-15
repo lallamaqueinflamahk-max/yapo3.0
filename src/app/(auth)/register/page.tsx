@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession, SAFE_MODE_CLIENT } from "@/lib/auth";
+import { AuthExitNav } from "@/components/auth";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -42,7 +43,10 @@ export default function RegisterPage() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error ?? "Error al crear la cuenta.");
+        const msg = res.status === 409
+          ? "Este correo ya está registrado. ¿Olvidaste tu contraseña?"
+          : (data.error ?? "Error al crear la cuenta.");
+        setError(msg);
         return;
       }
       router.push("/login?registered=1");
@@ -61,8 +65,13 @@ export default function RegisterPage() {
         </div>
 
         {error && (
-          <div className="rounded-xl border border-red-500/50 bg-red-500/10 px-4 py-2 text-sm text-red-700">
-            {error}
+          <div className="rounded-xl border border-red-500/50 bg-red-500/10 px-4 py-2 text-sm text-red-700 space-y-1" role="alert" aria-live="polite">
+            <p>{error}</p>
+            {error.includes("ya está registrado") && (
+              <Link href="/forgot-password" className="text-[var(--yapo-blue)] underline block">
+                Recuperar contraseña
+              </Link>
+            )}
           </div>
         )}
 
@@ -130,6 +139,7 @@ export default function RegisterPage() {
             Entrar
           </Link>
         </p>
+        <AuthExitNav />
       </div>
     </main>
   );

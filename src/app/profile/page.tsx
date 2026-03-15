@@ -76,6 +76,7 @@ const QUICK_LINKS = [
   { href: "/chat", label: "Chat", Icon: IconChat },
   { href: "/cerebro", label: "Buscador YAPÓ", Icon: IconCerebro },
   { href: "#planes", label: "Planes y suscripción", Icon: IconProfile },
+  { href: "/verify", label: "Verificación de identidad (KYC)", Icon: IconProfile },
   { href: "#servicios-especiales", label: "Biometría y huella", Icon: IconProfile },
 ] as const;
 

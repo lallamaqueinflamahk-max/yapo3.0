@@ -1,5 +1,7 @@
 # YAPÓ Backend
 
+Servicios externos opcionales: **WebSocket (chat)** y **Wallet API (REST)**. En producción la API principal es Next.js (`/api/*`) con Prisma y PostgreSQL; el frontend puede usar solo Next.js o además estos servicios.
+
 ## Servicios
 
 ### 1. Chat (WebSocket)
@@ -14,9 +16,11 @@ npm start
 
 Escucha por defecto en el puerto **3001**. Para otro puerto: `WS_PORT=3002 npm start`.
 
+Variable en el frontend: `NEXT_PUBLIC_WS_URL` (ej. `wss://tu-servidor.com` en producción).
+
 ### 2. Wallet API (REST)
 
-API REST de billetera interna: balance por usuario, transferencias internas. Store in-memory; balance cifrado en reposo; transacciones firmadas. **NO dinero real.**
+API REST de billetera: balance por usuario, transferencias internas. **Store in-memory** en este servidor; **NO dinero real.**
 
 ```bash
 cd backend
@@ -33,7 +37,7 @@ Endpoints:
 - `GET /transactions/:userId?limit=50` — historial de transacciones
 - `POST /transfer` — body: `{ fromUserId, toUserId, amount }`
 
-La app Next.js usa `/api/wallet/*` como proxy a este backend (variable `WALLET_API_URL` o `http://localhost:3002`).
+**Nota:** La app Next.js puede usar la wallet persistida en PostgreSQL vía `/api/wallet/transfer`, `/api/wallet/transactions`, etc. (Prisma). Este backend (`wallet-api.js`) es opcional para desarrollo o despliegue separado; si `WALLET_API_URL` está definida, parte de las rutas `/api/wallet/*` hacen proxy a este servidor.
 
 ## Arquitectura
 
@@ -47,3 +51,14 @@ Eventos servidor → cliente: `auth_ok`, `rooms`, `room_joined`, `messages`, `me
 ## Frontend
 
 La app Next.js se conecta a `ws://<hostname>:3001` (o `NEXT_PUBLIC_WS_URL` si está definida). Ejecutá el backend antes de usar el chat.
+
+## Despliegue
+
+| Componente | Dónde desplegar | Variables |
+|------------|-----------------|-----------|
+| **Next.js (API + app)** | Vercel, Node server | `DATABASE_URL`, `AUTH_SECRET`, OAuth, etc. Ver raíz del repo y `docs/BACKEND.md`. |
+| **Chat (WS)** | Railway, Render, Fly.io, VPS | `WS_PORT` (ej. 3001). Exponer URL en `NEXT_PUBLIC_WS_URL` (ej. `wss://ws.tudominio.com`). |
+| **Wallet API** | Opcional; mismo host que WS o separado | `WALLET_API_PORT`. Frontend/Next.js usa `WALLET_API_URL` para proxy. |
+
+- **Requisitos:** Node >= 18.
+- **Persistencia:** Chat y Wallet API en este repo son en memoria; para producción la API principal (Next.js) usa Prisma y PostgreSQL. Para alta disponibilidad del chat, considerar Redis o persistencia de mensajes en una siguiente fase.

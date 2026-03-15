@@ -15,14 +15,16 @@ import { prisma } from "@/lib/db";
 import { isMasterKeyProvided } from "@/lib/auth/dev/masterKey";
 import type { RoleId } from "@/lib/auth";
 import { isValidRoleId } from "@/lib/auth/roles";
+import { SESSION_MAX_AGE_SECONDS } from "@/lib/auth-next/constants";
 
 const MASTER_KEY_USER_ID = "dev-master";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
-  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
+  session: { strategy: "jwt", maxAge: SESSION_MAX_AGE_SECONDS },
   pages: { signIn: "/login" },
   trustHost: true,
+  useSecureCookies: process.env.NODE_ENV === "production",
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID ?? "",

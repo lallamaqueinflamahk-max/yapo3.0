@@ -5,12 +5,14 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useSession, SAFE_MODE_CLIENT } from "@/lib/auth";
+import { AuthExitNav } from "@/components/auth";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isSafeMode } = useSession();
   const skipLogin = isSafeMode || SAFE_MODE_CLIENT;
+  const registered = searchParams.get("registered") === "1";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -77,9 +79,15 @@ function LoginForm() {
 
         <h2 className="text-center text-xl font-semibold text-foreground">Entrá a tu cuenta</h2>
 
+        {registered && (
+          <div className="rounded-xl border border-yapo-emerald/40 bg-yapo-emerald/10 px-4 py-2 text-sm text-yapo-emerald-dark" role="status">
+            Cuenta creada. Iniciá sesión con tu email y contraseña.
+          </div>
+        )}
+
         {error && (
           <>
-            <div className="rounded-xl border border-red-500/50 bg-red-500/10 px-4 py-2 text-sm text-red-700">
+            <div className="rounded-xl border border-red-500/50 bg-red-500/10 px-4 py-2 text-sm text-red-700" role="alert" aria-live="polite">
               {error}
             </div>
             <Link
@@ -155,6 +163,7 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading}
+            aria-busy={loading}
             className="btn-interactive w-full min-h-[48px] rounded-xl bg-yapo-cta font-semibold text-yapo-white shadow-md border-2 border-yapo-cta-hover/50 hover:bg-yapo-cta-hover disabled:opacity-60"
           >
             {loading ? "Entrando…" : "Entrar a mi cuenta"}
@@ -164,10 +173,10 @@ function LoginForm() {
           </p>
         </form>
 
-        {/* Master Key (solo dev) */}
+        {/* Master Key (solo dev): navegar sin que auth bloquee; todos los roles. */}
         {process.env.NODE_ENV === "development" && (
           <details className="rounded-xl border border-foreground/10 bg-foreground/5 p-3">
-            <summary className="cursor-pointer text-sm text-foreground/70">Dev: Master Key</summary>
+            <summary className="cursor-pointer text-sm text-foreground/70">Dev: Master Key (YAPO_MASTER_KEY en .env)</summary>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -195,6 +204,7 @@ function LoginForm() {
             Registrarse
           </Link>
         </p>
+        <AuthExitNav />
       </div>
     </main>
   );

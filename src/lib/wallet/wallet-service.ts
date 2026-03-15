@@ -8,7 +8,7 @@ import { ACTIONS } from "@/lib/auth";
 import { hasPermissionForAction } from "@/lib/auth";
 import type {
   WalletBalance,
-  Transaction,
+  TransactionApi,
   TransferRequest,
   TransferResult,
 } from "./types";
@@ -50,7 +50,7 @@ function mockBalance(userId: string): WalletBalance {
 }
 
 /** Historial mock. */
-function mockTransactions(userId: string, _limit: number): Transaction[] {
+function mockTransactions(_userId: string, _limit: number): TransactionApi[] {
   return [];
 }
 
@@ -78,7 +78,7 @@ function mockTransfer(
 export interface IWalletService {
   getIdentity(): Identity;
   getBalance(): Promise<WalletBalance | null>;
-  getTransactions(limit?: number): Promise<Transaction[]>;
+  getTransactions(limit?: number): Promise<TransactionApi[]>;
   transfer(request: Omit<TransferRequest, "fromUserId">): Promise<TransferResult>;
 }
 

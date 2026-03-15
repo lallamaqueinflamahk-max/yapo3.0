@@ -5,7 +5,7 @@
 
 import type {
   WalletBalance,
-  Transaction,
+  TransactionApi,
   TransferRequest,
   TransferResult,
 } from "./types";
@@ -34,12 +34,12 @@ export async function fetchBalance(userId: string): Promise<WalletBalance | null
 export async function fetchTransactions(
   userId: string,
   limit = 50
-): Promise<Transaction[]> {
+): Promise<TransactionApi[]> {
   const base = getBaseUrl();
   const url = `${base}/transactions/${encodeURIComponent(userId)}?limit=${limit}`;
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error(await res.text().catch(() => res.statusText));
-  const data = (await res.json()) as { transactions: Transaction[] };
+  const data = (await res.json()) as { transactions: TransactionApi[] };
   return data.transactions ?? [];
 }
 

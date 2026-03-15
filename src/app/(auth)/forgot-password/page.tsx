@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { AuthExitNav } from "@/components/auth";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -51,6 +52,7 @@ export default function ForgotPasswordPage() {
         <Link href="/login" className="text-[var(--yapo-blue)] underline">
           Volver a login
         </Link>
+        <AuthExitNav />
       </main>
     );
   }
@@ -92,6 +94,7 @@ export default function ForgotPasswordPage() {
             Volver a login
           </Link>
         </p>
+        <AuthExitNav />
       </div>
     </main>
   );

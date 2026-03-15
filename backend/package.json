@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
+    "cloud": "node start-cloud.js",
     "dev": "node server.js",
     "wallet": "node wallet-api.js",
     "wallet:dev": "node wallet-api.js"

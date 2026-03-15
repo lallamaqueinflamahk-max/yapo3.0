@@ -8,6 +8,7 @@ Diseño de la base de datos del Censo Digital: separación estricta identificabl
 
 | Documento | Contenido |
 |-----------|-----------|
+| [BASE-DATOS-YAPO.md](./BASE-DATOS-YAPO.md) | **Base de datos operativa:** estructura Prisma/PostgreSQL, relaciones, índices, seguridad, integración con backend y frontend, migraciones y procedimientos clave. Punto de entrada para desarrollo. |
 | [MODELO-DATOS-CENSO-COMPLETO.md](./MODELO-DATOS-CENSO-COMPLETO.md) | **Modelo completo obligatorio:** separación estricta PRIVADA (identificables) vs COMERCIALIZABLE (anonimizados). Entidades: identidad, perfil laboral, formación, certificaciones, historial laboral, desempeño/reputación, territorio/GPS, escudos y beneficios, wallet, snapshots estadísticos. Diagramas lógicos. Analítica: KPIs, reportes por zona, impacto capacitaciones, métricas sponsors, informes gobierno. |
 | [MODELO-DATOS-CENSO-DIGITAL.md](./MODELO-DATOS-CENSO-DIGITAL.md) | Modelo de datos (versión resumida): entidades principales, PERSONAL vs STATS, diagramas. |
 | [REGLAS-ANONIMIZACION.md](./REGLAS-ANONIMIZACION.md) | Reglas de anonimización: supresión, generalización, agregación, k-anonimidad. Por tipo de dato (identificadores, demografía, territorio, montos, uso). |

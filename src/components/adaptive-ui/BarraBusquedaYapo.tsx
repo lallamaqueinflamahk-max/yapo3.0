@@ -7,6 +7,7 @@ import { runBarQuery } from "@/lib/cerebro";
 import type { BarResult } from "@/lib/cerebro";
 import type { RoleId } from "@/lib/cerebro";
 import { createTextToSpeech } from "@/lib/ai";
+import { getSearchPlaceholder, getLastSearches } from "@/lib/adaptive-ui/search-placeholder";
 import CerebroBarInput from "@/components/cerebro/CerebroBarInput";
 import CerebroBarResult from "@/components/cerebro/CerebroBarResult";
 import type { DashboardConfig } from "@/lib/adaptive-ui";
@@ -48,13 +49,17 @@ export interface BarraBusquedaYapoProps {
   /** Estilo compacto para hero (una sola línea visual). */
   variant?: "default" | "hero";
   className?: string;
+  /** Placeholder override (ej. "Ej: plomero en Lambaré"). */
+  placeholder?: string;
+  /** CTA principal con label de beneficio (ej. "Encontrar al mejor en 2 minutos"). */
+  primaryCtaLabel?: string;
 }
 
 /**
  * Barra de búsqueda con IA: texto + micrófono (voz), enlazada a OpenAI (/api/ai) y ElevenLabs (/api/voice).
  * Podés preguntar lo que sea; si OpenAI está activo se usa, si no, motor local. Voz: ElevenLabs o síntesis local.
  */
-export default function BarraBusquedaYapo({ config, variant = "default", className = "" }: BarraBusquedaYapoProps) {
+export default function BarraBusquedaYapo({ config, variant = "default", className = "", placeholder: placeholderOverride, primaryCtaLabel }: BarraBusquedaYapoProps) {
   const pathname = usePathname();
   const { identity } = useSession();
   const [value, setValue] = useState("");
@@ -88,15 +93,20 @@ export default function BarraBusquedaYapo({ config, variant = "default", classNa
     [pathname, identity]
   );
 
-  const placeholder = useMemo(
-    () =>
-      resolvePlaceholder(
-        config?.smart_bar_placeholder ?? "Preguntá lo que quieras: trabajo, billetera, escudos…",
+  const placeholder = useMemo(() => {
+    if (placeholderOverride) return placeholderOverride;
+    if (config?.smart_bar_placeholder) {
+      return resolvePlaceholder(
+        config.smart_bar_placeholder,
         (identity as { name?: string; displayName?: string })?.name ??
           (identity as { displayName?: string })?.displayName
-      ),
-    [config?.smart_bar_placeholder, identity]
-  );
+      );
+    }
+    const roles = (identity?.roles ?? ["vale"]) as RoleId[];
+    const lastSearches = typeof window !== "undefined" ? getLastSearches(identity?.userId) : [];
+    const lastSearch = lastSearches[0] ?? null;
+    return getSearchPlaceholder(roles, lastSearch);
+  }, [placeholderOverride, config?.smart_bar_placeholder, identity]);
 
   useEffect(() => {
     const tts = createTextToSpeech({ lang: "es-ES" });
@@ -206,6 +216,7 @@ export default function BarraBusquedaYapo({ config, variant = "default", classNa
         onSubmit={handleSubmit}
         disabled={status === "thinking"}
         placeholder={placeholder}
+        primaryCtaLabel={primaryCtaLabel}
         aria-label="Preguntar al Buscador YAPÓ con voz o texto"
         className={inputClassName}
       />

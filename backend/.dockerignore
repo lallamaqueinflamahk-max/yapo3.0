@@ -1,0 +1,9 @@
+node_modules
+npm-debug.log
+.env
+.env.*
+!.env.example
+ws-server
+README.md
+.git
+.gitignore

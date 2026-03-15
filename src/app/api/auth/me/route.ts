@@ -71,7 +71,9 @@ export async function GET() {
     // ignore
   }
 
-  const verified = profile?.profileStatus === "OK";
+  const kycLevel = (user as { verificationLevel?: string }).verificationLevel ?? "unverified";
+  const verified =
+    kycLevel === "verified" || kycLevel === "trusted" || profile?.profileStatus === "OK";
   const badges: string[] = [];
   if (role === "capeto") badges.push("Capeto");
   if (role === "kavaju") badges.push("Kavaju");

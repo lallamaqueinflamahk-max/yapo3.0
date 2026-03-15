@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { AuthExitNav } from "@/components/auth";
 
 const CONSENT_TEXT =
   "Acepto la Política de Privacidad y los Términos y Condiciones de YAPÓ. Entiendo que mis datos serán tratados según lo indicado y que puedo revocar el consentimiento en Configuración.";
@@ -22,6 +23,7 @@ export default function ConsentPage() {
         <Link href="/login" className="rounded-xl bg-[var(--yapo-blue)] px-6 py-3 font-medium text-[var(--yapo-white)]">
           Ir a login
         </Link>
+        <AuthExitNav />
       </main>
     );
   }
@@ -95,6 +97,7 @@ export default function ConsentPage() {
             {loading ? "Guardando…" : "Aceptar y continuar"}
           </button>
         </form>
+        <AuthExitNav />
       </div>
     </main>
   );

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 const HERO_IMAGE_PRIMARY = "/images/hero-workers.png";
@@ -57,25 +56,10 @@ export default function HeroSection() {
           <span className="block">con confianza real</span>
         </h1>
         <p className="mt-2 max-w-xl text-sm text-white/90 sm:text-base">
-          Perfiles verificados, pagos protegidos y reputación transparente.
+          Encontrá, compará y contratá en minutos.
         </p>
 
-        <div className="mt-4 flex flex-col gap-3 sm:mt-6 sm:flex-row">
-          <Link
-            href="/mapa"
-            className="btn-interactive inline-flex min-h-[48px] items-center justify-center rounded-2xl bg-yapo-cta px-5 py-3 font-semibold text-white shadow-lg border-2 border-yapo-cta-hover/50"
-          >
-            Buscar trabajo
-          </Link>
-          <Link
-            href="/mapa?servicios=1"
-            className="btn-interactive inline-flex min-h-[48px] items-center justify-center rounded-2xl border-2 border-white bg-white/10 px-5 py-3 font-semibold text-white shadow-md hover:bg-white/20 hover:shadow-lg"
-          >
-            Publicar servicio
-          </Link>
-        </div>
-
-        <div className="mt-4 flex flex-wrap gap-3 text-xs text-white/90 sm:mt-6 sm:gap-4 sm:text-sm">
+        <div className="mt-6 flex flex-wrap gap-4 text-xs text-white/90 sm:mt-6 sm:gap-4 sm:text-sm">
           <span>✔ Verificados</span>
           <span>✔ Pago protegido</span>
           <span>✔ Escudos activos</span>

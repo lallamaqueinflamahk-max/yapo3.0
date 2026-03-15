@@ -90,3 +90,40 @@ export interface BankConnection {
   credit(userId: string, amount: number, reference: string): Promise<void>;
   getBalance(userId: string): Promise<number>;
 }
+
+// --- Tipos para wallet-client / wallet-service (API REST) ---
+
+/** Balance expuesto por la API de billetera (formato REST). */
+export interface WalletBalance {
+  userId: string;
+  balance: string;
+  currency: string;
+  updatedAt: string;
+}
+
+/** Petición de transferencia (API). */
+export interface TransferRequest {
+  fromUserId: string;
+  toUserId: string;
+  amount: string;
+  reason?: string;
+}
+
+/** Transacción devuelta por la API (formato REST). */
+export interface TransactionApi {
+  id: string;
+  fromUserId: string;
+  toUserId: string;
+  amount: string;
+  currency: string;
+  signature?: string;
+  createdAt: string;
+  status: string;
+}
+
+/** Resultado de transferencia (API). */
+export interface TransferResult {
+  success: boolean;
+  transaction?: TransactionApi;
+  error?: string;
+}

@@ -290,11 +290,13 @@ function MapaGPSPageContent() {
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error("Error al cargar"))))
       .then((data: { profesiones?: ProfesionZona[] }) => {
         if (!cancelled && Array.isArray(data?.profesiones)) setProfesiones(data.profesiones);
+        if (!cancelled) { fetch('http://127.0.0.1:7244/ingest/cdb4230b-daff-48fe-87c3-cb3e79b1f0a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'9b2f70'},body:JSON.stringify({sessionId:'9b2f70',location:'mapa/page.tsx:profesiones-ok',message:'Mapa profesiones loaded',data:{count:data?.profesiones?.length??0,barrioId:barrio.id},timestamp:Date.now(),hypothesisId:'H4-mapa'})}).catch(()=>{}); }
       })
       .catch(() => {
         if (!cancelled) {
           setErrorProfesiones("No se pudieron cargar las profesiones de la zona.");
           setProfesiones([]);
+          fetch('http://127.0.0.1:7244/ingest/cdb4230b-daff-48fe-87c3-cb3e79b1f0a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'9b2f70'},body:JSON.stringify({sessionId:'9b2f70',location:'mapa/page.tsx:profesiones-err',message:'Mapa profesiones error',data:{barrioId:barrio.id},timestamp:Date.now(),hypothesisId:'H4-mapa'})}).catch(()=>{});
         }
       })
       .finally(() => {
@@ -322,6 +324,7 @@ function MapaGPSPageContent() {
         if (!cancelled) {
           setProfesionalesZona(Array.isArray(profRes?.profesionales) ? profRes.profesionales : []);
           setEmpresasZona(Array.isArray(empRes?.empresas) ? empRes.empresas : []);
+          fetch('http://127.0.0.1:7244/ingest/cdb4230b-daff-48fe-87c3-cb3e79b1f0a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'9b2f70'},body:JSON.stringify({sessionId:'9b2f70',location:'mapa/page.tsx:zonas-ok',message:'Mapa zonas loaded',data:{profCount:profRes?.profesionales?.length??0,empCount:empRes?.empresas?.length??0,barrioId},timestamp:Date.now(),hypothesisId:'H4-mapa'})}).catch(()=>{});
         }
       })
       .catch(() => {
@@ -329,6 +332,7 @@ function MapaGPSPageContent() {
           setErrorZonas("No se pudieron cargar profesionales ni empresas de la zona.");
           setProfesionalesZona([]);
           setEmpresasZona([]);
+          fetch('http://127.0.0.1:7244/ingest/cdb4230b-daff-48fe-87c3-cb3e79b1f0a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'9b2f70'},body:JSON.stringify({sessionId:'9b2f70',location:'mapa/page.tsx:zonas-err',message:'Mapa zonas error',data:{barrioId},timestamp:Date.now(),hypothesisId:'H4-mapa'})}).catch(()=>{});
         }
       })
       .finally(() => {

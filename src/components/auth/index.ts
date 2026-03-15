@@ -5,3 +5,4 @@ export { default as BiometricModal } from "./BiometricModal";
 export type { BiometricModalProps } from "./BiometricModal";
 export { default as SafeModeRoleSelector } from "./SafeModeRoleSelector";
 export type { SafeModeRoleSelectorProps } from "./SafeModeRoleSelector";
+export { AuthExitNav } from "./AuthExitNav";
